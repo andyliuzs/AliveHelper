@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/base_alive_component"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/base_alive_suggestion_highlight">
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="3dp"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/base_alive_error_view"
+        layout="@layout/base_alive_error_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/base_alive_empty_view"
+        layout="@layout/base_alive_empty_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/base_alive_loading_view"
+        layout="@layout/base_alive_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

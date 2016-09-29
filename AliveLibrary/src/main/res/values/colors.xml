@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+
+    <color name="base_alive_retry_button_background">#30000000</color>
+    <color name="base_alive_retry_button_background_stroke">#50000000</color>
+    <color name="base_alive_default_background">#f6f5f5</color>
+    <color name="base_alive_suggestion_highlight">#177bbd</color>
+
+    <!--dialog-->
+    <color name="alive_dialog_line_color">#cccccc</color>
+    <color name="alive_dialog_message_color">#242424</color>
+    <color name="alive_dialog_cancel_text_color">#6a6d6f</color>
+    <color name="alive_no_color">#00000000</color>
+    <color name="alive_update_btn_bg">#158ED0</color>
+    <color name="alive_dialog_btn_border_color">#3abf74</color>
+    <color name="alive_dialog_green_top">#3ac074</color>
+
+    <color name="alive_alpha00">#00000000</color>
+    <color name="alive_alpha05">#0D000000</color>
+
+</resources>

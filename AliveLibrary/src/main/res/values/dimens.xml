@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="alive_dialog_bottom_btn_height">46dp</dimen>
+    <dimen name="alive_dialog_width_padding">20.0dip</dimen>
+    <dimen name="alive_dialog_webview_minWidth">315.0dip</dimen>
+    <dimen name="alive_dialog_webview_minHeight">350.0dip</dimen>
+</resources>

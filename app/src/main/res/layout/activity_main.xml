@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    tools:context="com.example.andyliu.alivehelperdemo.MainActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:id="@+id/textview"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/showactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="直接显示默认acitivity" />
+
+            <Button
+                android:id="@+id/onlygetdata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="直接获取数据" />
+
+            <Button
+                android:id="@+id/showdialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="直接显示Dialog" />
+
+            <Button
+                android:id="@+id/sendbroadcast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="直接发送广播" />
+
+            <Button
+                android:id="@+id/showweb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="直接打开网页" />
+
+            <!--<Button-->
+                <!--android:id="@+id/go_web_notification"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="弹出打开网页的Notify" />-->
+
+            <Button
+                android:id="@+id/go_activity_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="弹出打开Activity的Notify" />
+
+            <!--<Button-->
+                <!--android:id="@+id/send_broadcast_notification"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="弹出发送广播的Notify" />-->
+
+            <!--<Button-->
+                <!--android:id="@+id/send_dialog_notification"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="弹出打开Dialog的Notify" />-->
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

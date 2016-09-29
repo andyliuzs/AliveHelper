@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alive_activity_title">%1$s使用指南</string>
+    <string name="alive_notify_text">为了更好的体验%1$s,防止应用被系统或其它应用杀死。</string>
+    <string name="alive_cancel">取消</string>
+    <string name="alive_ok">确定</string>
+    <string name="alive_close">关闭</string>
+</resources>

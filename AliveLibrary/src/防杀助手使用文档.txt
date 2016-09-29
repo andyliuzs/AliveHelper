@@ -1,0 +1,98 @@
+1、依赖权限配置
+
+    1）依赖权限
+        <uses-permission
+            android:name="android.permission.SYSTEM_ALERT_WINDOW"
+            />
+
+        <uses-permission android:name="android.permission.INTERNET" />
+
+    2）注意事项
+
+        i.如项目中不需要alertdialog展示数据，无需申请"android.permission.SYSTEM_ALERT_WINDOW"权限
+
+        ii.权限申请方法
+
+            sdk<23 AndroidManifest配置权限
+
+                <uses-permission
+                            android:name="android.permission.SYSTEM_ALERT_WINDOW"
+                             />
+
+            sdk>=23 AndroidManifest配置权限后，还需要手动授权
+
+                <uses-permission
+                            android:name="android.permission.SYSTEM_ALERT_WINDOW"
+                             />
+
+                打开授权页面方法：
+                private void initPermission() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (!Settings.canDrawOverlays(MainActivity.this)) {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intent, 10);
+                        }
+                    }
+                }
+
+                接收返回数据
+                    @TargetApi(Build.VERSION_CODES.M)
+                    @Override
+                    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+                        if (requestCode == 10) {
+                            if (Settings.canDrawOverlays(this)) {
+                                Log.v(TAG, "SYSTEM_ALERT_WINDOW 授权成功...");
+                                initPermission();
+                            } else {
+                                Log.v(TAG, "SYSTEM_ALERT_WINDOW 授权失败...");
+                            }
+                        }
+                    }
+
+
+
+
+2、Application中配置防杀助手(无耗时操作)。
+
+  1.初始化上下文(必须)
+  2.是否打印log(可选)
+  3.设置显示UI的主题颜色(可选)
+  4.是否在原网环境下(可选)
+  方式一
+      AliveHelper.init(getApplicationContext());
+      AliveHelper.setDebug(true);
+      AliveHelper.setThemeColor(R.color.alive_dialog_btn_border_color);
+      AliveHelper.useAnet(false);
+  方式二
+      AliveHelper.init(getApplicationContext()).setDebug(true).setThemeColor(R.color.alive_dialog_btn_border_color).useAnet(false);
+
+
+3、细节使用。
+
+    1）使用activity展示数据
+                   i.直接获取数据
+                                    AliveHelper.getHelper()
+                                            .check(new CheckCallBack() {
+                                                @Override
+                                                public void onGetData(String url) {
+                                                    textview.setText("CheckCallBack function url==" + url);
+                                                }
+
+                                                @Override
+                                                public void dataEmpty() {
+                                                    textview.setText("CheckCallBack function url==" + null);
+                                                }
+
+                                                @Override
+                                                public void getDataError(String error) {
+                                                    textview.setText("CheckCallBack function error\n" + error);
+                                                }
+                                            });
+                    ii.通过notification跳转显示数据
+                                 AliveHelper.getHelper()
+                                         .notification(2000);
+
+
+
+**其它请参考AliveHelperDemo中MainActivity
