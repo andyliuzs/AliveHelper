@@ -27,6 +27,7 @@ AliveHelper防杀助手,统计应用使用率.
             e.printStackTrace();
         }
 
-        AliveHelper.getHelper().openAliveCount(jsonObject.toString());//开启应用使用率统计
-
-*注意:openAliveCount(String info),info格式为json,json内参数内容不固定,需讨论.
+        //开启应用使用率统计
+        AliveHelper.getHelper().openAliveCount(jsonObject.toString());
+        
+        - 注意:openAliveCount(String info),info格式为json,json内参数内容不固定,需讨论.
