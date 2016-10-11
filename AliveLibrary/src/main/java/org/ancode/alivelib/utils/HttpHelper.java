@@ -1,10 +1,18 @@
 package org.ancode.alivelib.utils;
 
+import android.text.TextUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -20,6 +28,7 @@ public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
     public static Map<String, HttpURLConnection> urlgetConnections = null;
     public static Map<String, HttpURLConnection> urlpostConnections = null;
+    public static final String CHARSET = "UTF-8";
 
     /**
      * post
@@ -54,15 +63,17 @@ public class HttpHelper {
             // 设置通用的请求属性
             httpURLConnection.setRequestProperty("accept", "*/*");
             httpURLConnection.setRequestProperty("connection", "Keep-Alive");
+            httpURLConnection.setRequestProperty("Accept-Charset", CHARSET);
             httpURLConnection.setRequestProperty("Content-Length", String
                     .valueOf(params.length()));
+            // 发送POST请求必须设置如下两行
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
             if (urlpostConnections == null) {
                 urlpostConnections = new HashMap<String, HttpURLConnection>();
             }
             urlpostConnections.put(flag, httpURLConnection);
-            // 发送POST请求必须设置如下两行
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setDoInput(true);
+
             // 获取URLConnection对象对应的输出流
             printWriter = new PrintWriter(httpURLConnection.getOutputStream());
             // 发送请求参数
@@ -107,7 +118,102 @@ public class HttpHelper {
 
 
         }
-        Log.e(TAG, "返回数据=" + responseResult.toString());
+        Log.v(TAG, "返回数据=" + responseResult.toString());
+        urlpostConnections.remove(flag);
+        return responseResult.toString();
+    }
+
+
+    /**
+     * postJson
+     *
+     * @param requestUrl
+     * @param params
+     * @return
+     */
+    public static String postJson(String requestUrl, String params, String flag) {
+        BufferedReader bufferedReader = null;
+
+        DataOutputStream out = null;
+        StringBuffer responseResult = new StringBuffer();
+        HttpURLConnection httpURLConnection = null;
+        BufferedWriter writer = null;
+        // 组织请求参数
+        try {
+            URL realUrl = new URL(requestUrl);
+            // 打开和URL之间的连接
+            httpURLConnection = (HttpURLConnection) realUrl.openConnection();
+            // 设置通用的请求属性
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setConnectTimeout(1500);
+            httpURLConnection.setReadTimeout(1500);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setInstanceFollowRedirects(true);
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.setRequestProperty("Accept-Charset", CHARSET);
+//            httpURLConnection.setRequestProperty("Content-Length", String.valueOf(params.getBytes().length));
+            httpURLConnection.connect();
+            if (urlpostConnections == null) {
+                urlpostConnections = new HashMap<String, HttpURLConnection>();
+            }
+            urlpostConnections.put(flag, httpURLConnection);
+            // 获取URLConnection对象对应的输出流
+            out = new DataOutputStream(
+                    httpURLConnection.getOutputStream());
+            Log.v(TAG, "上传的数据为\n" + params);
+            DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+            writer = new BufferedWriter(new OutputStreamWriter(out, CHARSET));
+            writer.write(params);
+            writer.flush();
+
+            // 根据ResponseCode判断连接是否成功
+            int responseCode = httpURLConnection.getResponseCode();
+            if (responseCode != 200) {
+                Log.e(TAG, "错误 response=" + responseCode);
+            } else {
+                Log.e(TAG, "发送postJson请求成功!");
+            }
+            // 定义BufferedReader输入流来读取URL的ResponseData
+            bufferedReader = new BufferedReader(new InputStreamReader(
+                    httpURLConnection.getInputStream()));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                responseResult.append(line);
+            }
+
+        } catch (Exception e) {
+            String error = e.getLocalizedMessage();
+            if (!TextUtils.isEmpty(error)) {
+                if (error.contains("Permission denied")) {
+                    Log.e(TAG, "发送postJson请求错误!\n请配置'android.permission.INTERNET'权限");
+                } else {
+                    Log.e(TAG, "发送postJson请求错误!\n" + error);
+                }
+            }
+
+
+        } finally {
+            httpURLConnection.disconnect();
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+
+            } catch (IOException ex) {
+                Log.e(TAG, "关闭http请求失败\n" + ex.getLocalizedMessage());
+            }
+
+
+        }
+        Log.v(TAG, "返回数据=" + responseResult.toString());
         urlpostConnections.remove(flag);
         return responseResult.toString();
     }
@@ -206,5 +312,6 @@ public class HttpHelper {
         }
 
     }
+
 
 }

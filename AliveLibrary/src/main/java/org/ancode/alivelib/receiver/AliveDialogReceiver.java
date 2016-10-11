@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.AliveHelper;
+import org.ancode.alivelib.config.HelperConfig;
 
 /**
  * Created by andyliu on 16-8-31.
@@ -24,13 +24,8 @@ public class AliveDialogReceiver extends BroadcastReceiver {
             if (TextUtils.isEmpty(appName))
                 appName = intent.getStringExtra(HelperConfig.APP_NAME_KEY);
 
-//            AliveHelper.getHelper()
-//                    .showAsDialog()
-//                    .setThemeColor(themeColor)
-//                    .check();
+            AliveHelper.getHelper().showDialog();
 
-            AliveHelper.getHelper()
-                    .showDialog();
         }
 
 

@@ -9,8 +9,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.WindowManager;
 
-import org.ancode.alivelib.R;
 import org.ancode.alivelib.listener.CheckCallBack;
+import org.ancode.alivelib.R;
 import org.ancode.alivelib.notification.AliveNotification;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.IntentUtils;

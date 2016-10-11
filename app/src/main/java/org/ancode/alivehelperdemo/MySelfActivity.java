@@ -1,43 +1,37 @@
-package org.ancode.alivelib.activity;
+package org.ancode.alivehelperdemo;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.URLUtil;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import org.ancode.alivelib.R;
+import org.ancode.alivehelperdemo.R;
+import org.ancode.alivelib.activity.BaseAliveHelperActivity;
 import org.ancode.alivelib.utils.Log;
 
 /**
- * Created by andyliu on 16-8-24.
+ * Created by andyliu on 16-8-30.
  */
-public class AliveHelperActivity extends BaseAliveHelperActivity {
-    private static final String TAG = AliveHelperActivity.class.getSimpleName();
+public class MySelfActivity extends BaseAliveHelperActivity {
+    private static final String TAG = MySelfActivity.class.getSimpleName();
     private WebView webView;
-    ProgressBar progressBar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v(TAG, "AliveHelperActivity onCreate");
     }
-
 
     @Override
     protected int setLayout() {
-        return R.layout.alive_helper_activity;
+        return R.layout.myself_activity;
     }
-
 
     @Override
     protected void initView() {
-        progressBar = (ProgressBar) findViewById(R.id.progress);
         webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         //获取WebSettings对象,设置缩放
@@ -45,22 +39,7 @@ public class AliveHelperActivity extends BaseAliveHelperActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setDomStorageEnabled(true);//允许DCOM
-
-        final ProgressBar finalProgressBar = progressBar;
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                finalProgressBar.setProgress(newProgress);
-                if (newProgress == 100) {
-                    finalProgressBar.setVisibility(View.INVISIBLE);
-                } else {
-                    finalProgressBar.setVisibility(View.VISIBLE);
-                }
-            }
-        });
     }
-
 
     @Override
     protected void onRefresh(String data) {
@@ -72,6 +51,7 @@ public class AliveHelperActivity extends BaseAliveHelperActivity {
                     return false;
                 }
                 Log.v("WebViewDialog", "start Web url is = " + url);
+//                    context.startActivity(IntentUtils.getNormalWeb(url));
                 try {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -88,15 +68,7 @@ public class AliveHelperActivity extends BaseAliveHelperActivity {
                 super.onPageFinished(view, url);
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (webView != null) {
-            webView.destroy();
-            webView = null;
-        }
+        Toast.makeText(MySelfActivity.this, "my self activity ", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -108,5 +80,4 @@ public class AliveHelperActivity extends BaseAliveHelperActivity {
 
         return super.onKeyDown(keyCode, event);
     }
-
 }

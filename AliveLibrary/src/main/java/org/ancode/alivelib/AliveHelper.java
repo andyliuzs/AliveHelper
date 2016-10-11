@@ -1,29 +1,29 @@
 package org.ancode.alivelib;
 
-import android.app.Application;
-import android.app.Dialog;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
+import android.content.Intent;
+import android.text.TextUtils;
 
-import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.listener.CheckCallBack;
-import org.ancode.alivelib.notification.AliveNotification;
-import org.ancode.alivelib.utils.Utils;
+import org.ancode.alivelib.utils.SPUtils;
 import org.ancode.alivelib.ware.ActivityAliveWare;
 import org.ancode.alivelib.ware.BroadCastAliveWare;
-import org.ancode.alivelib.ware.DialogAliveWare;
 import org.ancode.alivelib.ware.CheckAliveWare;
+import org.ancode.alivelib.ware.DialogAliveWare;
 import org.ancode.alivelib.ware.WebViewWare;
+import org.ancode.alivelib.config.HelperConfig;
+import org.ancode.alivelib.notification.AliveNotification;
+import org.ancode.alivelib.service.AliveHelperService;
+import org.json.JSONObject;
 
 /**
  * Created by andyliu on 16-8-25.
  */
 public class AliveHelper {
-    private static AliveHelper aliveHelper = null;
+
+
+    private static AliveHelper helper = null;
 
     /****
      * 初始化library
@@ -32,11 +32,11 @@ public class AliveHelper {
      * @return
      */
     public static AliveHelper init(Context context) {
-        if (aliveHelper == null) {
+        if (helper == null) {
             HelperConfig.CONTEXT = context;
-            aliveHelper = new AliveHelper();
+            helper = new AliveHelper();
         }
-        return aliveHelper;
+        return helper;
     }
 
 
@@ -48,7 +48,7 @@ public class AliveHelper {
      */
     public static AliveHelper useAnet(boolean b) {
         HelperConfig.USE_ANET = b;
-        return aliveHelper;
+        return helper;
     }
 
 
@@ -60,38 +60,131 @@ public class AliveHelper {
      */
     public static AliveHelper setDebug(boolean debug) {
         HelperConfig.DEBUG = debug;
-        return aliveHelper;
+        return helper;
     }
 
     public static AliveHelper setThemeColor(int themeColorId) {
         HelperConfig.THEME_COLOR_ID = themeColorId;
-        return aliveHelper;
-    }
-
-
-    /**
-     * 获取防杀助手Helper
-     *
-     * @return AliveHelper
-     */
-    public static AliveHelper getHelper() {
-        if (aliveHelper == null) {
-            throw new NullPointerException("未初始化AliveHelper，请先在Application中初始化AliveHelper。");
-        } else {
-            return aliveHelper;
-        }
+        return helper;
     }
 
     /***
-     * 释放helper
+     * 设置notification小图标id
+     * <p>取值范围是[0-1]</p>
+     *
+     * @param iconId
+     * @return
      */
-    public static void killHelper() {
-        if (aliveHelper != null) {
-            aliveHelper = null;
+    public static AliveHelper setNotifySmallIcon(int iconId) {
+        if (iconId < 0) {
+            throw new RuntimeException("setting small icon id error");
+        }
+        HelperConfig.SMALL_ICON_ID = iconId;
+        return helper;
+    }
+
+    public static AliveHelper getHelper() {
+        if (helper == null) {
+            throw new NullPointerException("未初始化helper，请先在Application中初始化helper。");
+        } else {
+            return helper;
+        }
+    }
+
+    public static void release() {
+        if (helper != null) {
+            helper = null;
         }
         if (HelperConfig.CONTEXT != null) {
             HelperConfig.CONTEXT = null;
         }
+    }
+
+    /**
+     * 开启保活统计服务
+     * <p>
+     * 参数说明
+     * <br/>
+     * info是为了确保设置的信息为唯一.内容格式不固定,但必须是json字符串
+     * <br/>
+     * 举例
+     * <br/>
+     * { "device":"htc", "os":"系统版本号","id":"13018211911"}
+     * </p>
+     *
+     * @param info
+     * @return
+     */
+    public AliveHelper openAliveCount(String info) {
+        if (TextUtils.isEmpty(info)) {
+            throw new RuntimeException("info is null");
+        }
+        SPUtils.getInstance().setACUploadInfo(info);
+        Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
+        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.OPEN_ALIVE_COUNT_SERVICE_ACTION);
+        HelperConfig.CONTEXT.startService(intent);
+        return this;
+    }
+
+    /***
+     * 关闭保活统计服务
+     */
+    public void closeAliveCount() {
+        Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
+        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.CLOSE_ALIVE_COUNT_SERVICE_ACTION);
+        HelperConfig.CONTEXT.startService(intent);
+    }
+
+    /***
+     * 开启保活警告
+     * <p>警告点,取值范围是[0-1]</p>
+     *
+     * @param warningPoint
+     * @return
+     */
+    public AliveHelper openAliveWarning(float warningPoint) {
+        if (warningPoint < 0 || warningPoint > 1) {
+            throw new RuntimeException("warning point range of [0-1]. your settings are" + warningPoint);
+        }
+        HelperConfig.WARNING_POINT = warningPoint;
+        //启动统计alivetime服务
+        Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
+        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.OPEN_ALIVE_WARNING_SERVICE_ACTION);
+        HelperConfig.CONTEXT.startService(intent);
+
+        return this;
+    }
+
+    /****
+     * 设置警告点
+     *
+     * @param warningPoint
+     * @return
+     */
+    public AliveHelper setWarnPoint(float warningPoint) {
+        if (warningPoint < 0 || warningPoint > 1) {
+            throw new RuntimeException("warning point range of [0-1]. your settings are" + warningPoint);
+        }
+        HelperConfig.WARNING_POINT = warningPoint;
+        return this;
+    }
+
+    /****
+     * 获取警告点
+     *
+     * @return
+     */
+    public float getWarnPoint() {
+        return HelperConfig.WARNING_POINT;
+    }
+
+    /***
+     * 关闭保活警告
+     */
+    public void closeAliveWarning() {
+        Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
+        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.CLOSE_ALIVE_WARNING_SERVICE_ACTION);
+        HelperConfig.CONTEXT.startService(intent);
     }
 
 
@@ -110,16 +203,6 @@ public class AliveHelper {
         new ActivityAliveWare().showNotification(afterTime);
     }
 
-    /***
-     * 自定义notification图标
-     *
-     * @param lageIconId
-     * @param smallIconId
-     * @param afterTime
-     */
-    public void notification(int lageIconId, int smallIconId, long afterTime) {
-        new ActivityAliveWare().showNotification(lageIconId, smallIconId, afterTime);
-    }
 
     /***
      * 取消方杀助手的提示

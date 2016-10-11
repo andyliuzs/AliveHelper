@@ -22,6 +22,7 @@ import android.widget.TextView;
 import org.ancode.alivelib.R;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.Log;
+import org.ancode.alivelib.utils.UiHelper;
 import org.ancode.alivelib.utils.Utils;
 
 
@@ -174,7 +175,7 @@ public class WebViewDialog extends Dialog {
                         color = context.getResources().getColor(positiveButtonTextColor);
                     }
                 } else {
-                    color = Utils.getThemeColor();
+                    color = UiHelper.getThemeColor();
                 }
                 _positiveButton.setTextColor(color);
 
@@ -204,7 +205,7 @@ public class WebViewDialog extends Dialog {
                     }
 
                 } else {
-                    color = Utils.getThemeColor();
+                    color = UiHelper.getThemeColor();
                 }
                 _negativeButton.setTextColor(color);
             } else {
@@ -283,6 +284,24 @@ public class WebViewDialog extends Dialog {
                 });
             }
             dialog.setContentView(layout);
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (webView != null) {
+                        webView.destroy();
+                        webView = null;
+                    }
+                }
+            });
+            dialog.setOnCancelListener(new OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (webView != null) {
+                        webView.destroy();
+                        webView = null;
+                    }
+                }
+            });
             return dialog;
         }
 

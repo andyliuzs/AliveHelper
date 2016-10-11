@@ -1,20 +1,14 @@
 package org.ancode.alivelib.ware;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 
 import org.ancode.alivelib.R;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.notification.AliveNotification;
 import org.ancode.alivelib.utils.IntentUtils;
+import org.ancode.alivelib.utils.UiHelper;
 import org.ancode.alivelib.utils.Utils;
 
 /**
@@ -88,15 +82,19 @@ public class ActivityAliveWare extends BaseWare {
 
     public void showNotification(long aftertime) {
         baseNotification = new AliveNotification();
-        Bitmap lageIcon = Utils.getAppIcon();
+        Bitmap lageIcon = UiHelper.getAppIcon();
         String appName = Utils.getAppName();
         String title = String.format(HelperConfig.CONTEXT.getString(R.string.alive_activity_title), appName);
         String text = String.format(HelperConfig.CONTEXT.getString(R.string.alive_notify_text), appName);
         baseNotification.setTitle(title)
                 .setText(text)
                 .setTickerText(title)
-                .setLargeIcon(lageIcon)
-                .setSmallIcon(HelperConfig.CONTEXT.getApplicationInfo().icon);
+                .setLargeIcon(lageIcon);
+        if (HelperConfig.SMALL_ICON_ID <= -1) {
+            baseNotification.setSmallIcon(HelperConfig.CONTEXT.getApplicationInfo().icon);
+        } else {
+            baseNotification.setSmallIcon(HelperConfig.SMALL_ICON_ID);
+        }
         showNotification(baseNotification, aftertime);
     }
 
@@ -104,9 +102,9 @@ public class ActivityAliveWare extends BaseWare {
         baseNotification = new AliveNotification();
         Bitmap lageIcon = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            lageIcon = Utils.drawableToBitmap(HelperConfig.CONTEXT.getDrawable(lageIconId));
+            lageIcon = UiHelper.drawableToBitmap(HelperConfig.CONTEXT.getDrawable(lageIconId));
         } else {
-            lageIcon = Utils.drawableToBitmap(HelperConfig.CONTEXT.getResources().getDrawable(lageIconId));
+            lageIcon = UiHelper.drawableToBitmap(HelperConfig.CONTEXT.getResources().getDrawable(lageIconId));
         }
         String appName = Utils.getAppName();
         String title = String.format(HelperConfig.CONTEXT.getString(R.string.alive_activity_title), appName);

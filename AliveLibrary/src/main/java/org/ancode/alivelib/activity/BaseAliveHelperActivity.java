@@ -7,11 +7,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import org.ancode.alivelib.AliveHelper;
 import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.utils.Utils;
-import org.ancode.alivelib.ware.CheckAliveWare;
 import org.ancode.alivelib.config.HelperConfig;
-import org.ancode.alivelib.AliveHelper;
 import org.ancode.alivelib.R;
 import org.ancode.alivelib.utils.UiHelper;
 import org.ancode.alivelib.utils.Log;
@@ -39,6 +38,7 @@ public abstract class BaseAliveHelperActivity extends Activity {
         initBaseData();
         initBaseView();
         initView();
+        loadData();
         Log.v(TAG, "BaseAliveHelperActivity onCreate");
     }
 
@@ -55,7 +55,6 @@ public abstract class BaseAliveHelperActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadData();
     }
 
     private void loadData() {
@@ -199,7 +198,7 @@ public abstract class BaseAliveHelperActivity extends Activity {
                 color = getResources().getColor(themeColor);
             }
         } else {
-            color = Utils.getThemeColor();
+            color = UiHelper.getThemeColor();
         }
 
         topView.setBackgroundColor(color);

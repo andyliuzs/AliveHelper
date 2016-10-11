@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.notification.AliveNotification;
-import org.ancode.alivelib.utils.DataUtils;
+import org.ancode.alivelib.utils.HttpUtils;
 import org.ancode.alivelib.utils.HttpHelper;
 import org.ancode.alivelib.utils.Log;
 
@@ -30,7 +30,7 @@ public class CheckAliveWare extends BaseWare {
     }
 
     private void getData(final Handler handler, final String flag) {
-        DataUtils.getData(handler, flag);
+        HttpUtils.getData(handler, flag);
     }
 
 
@@ -47,15 +47,15 @@ public class CheckAliveWare extends BaseWare {
                 }
                 return;
             }
-            String data = msg.getData().getString(DataUtils.GET_DATA_KEY);
+            String data = msg.getData().getString(HttpUtils.GET_DATA_KEY);
             if (!TextUtils.isEmpty(data)) {
-                if (msg.what == DataUtils.GET_DATA_ERROR) {
+                if (msg.what == HttpUtils.GET_DATA_ERROR) {
                     if (checkCallBack != null) {
                         checkCallBack.getDataError(data);
                     } else {
                         Log.e(TAG, "checkCallBack is null_image");
                     }
-                } else if (msg.what == DataUtils.GET_DATA_WHAT) {
+                } else if (msg.what == HttpUtils.GET_DATA_WHAT) {
                     if (checkCallBack != null) {
 
                         checkCallBack.onGetData(data);

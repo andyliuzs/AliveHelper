@@ -2,13 +2,26 @@ package org.ancode.alivelib.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+
+import org.ancode.alivelib.R;
+import org.ancode.alivelib.config.HelperConfig;
+import org.ancode.alivelib.service.AliveHelperService;
 
 /**
  * Created by andyliu on 16-8-30.
@@ -51,7 +64,6 @@ public class UiHelper {
     }
 
 
-
     /**
      * 设置状态栏全透明
      *
@@ -64,11 +76,6 @@ public class UiHelper {
         transparentStatusBar(activity);
         setRootView(activity);
     }
-
-
-
-
-
 
 
     /**
@@ -163,5 +170,47 @@ public class UiHelper {
         green = (int) (green * a + 0.5);
         blue = (int) (blue * a + 0.5);
         return 0xff << 24 | red << 16 | green << 8 | blue;
+    }
+
+
+    public static int getThemeColor() {
+        TypedValue typedValue = new TypedValue();
+
+        TypedArray a = HelperConfig.CONTEXT.obtainStyledAttributes(HelperConfig.CONTEXT.getApplicationInfo().theme, new int[]{R.attr.colorPrimary});
+        int color = a.getColor(0, 0);
+        a.recycle();
+        return color;
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+
+        Canvas canvas = new Canvas(bitmap);
+
+        //canvas.setBitmap(bitmap);
+
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+
+        drawable.draw(canvas);
+
+        return bitmap;
+
+    }
+
+    public static Bitmap getAppIcon() {
+        PackageManager pm = HelperConfig.CONTEXT.getPackageManager();
+        Drawable icon = null;
+        try {
+            String packageName = HelperConfig.CONTEXT.getPackageName().toString();
+            icon = pm.getApplicationInfo(packageName,
+                    PackageManager.GET_META_DATA).loadIcon(pm);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return drawableToBitmap(icon);
     }
 }

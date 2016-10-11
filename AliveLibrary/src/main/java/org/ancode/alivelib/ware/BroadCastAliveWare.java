@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
+import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.notification.AliveNotification;
-import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.utils.IntentUtils;
 import org.ancode.alivelib.utils.Log;
 

@@ -23,9 +23,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LevelListDrawable;
+import android.os.Build;
 import android.support.v7.app.NotificationCompat;
 
-import org.ancode.alivelib.R;
+import org.ancode.alivelib.AliveHelper;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.Log;
 
@@ -40,7 +42,6 @@ public class AliveNotification {
     private NotificationManager manager;
     private static final int NOTIFY_FLAG = 0x1101;
     private PendingIntent pendingIntent = null;
-
 
     public AliveNotification() {
         initManager();
@@ -84,6 +85,7 @@ public class AliveNotification {
     public void cancelAll() {
         if (manager != null)
             manager.cancelAll();
+
     }
 
     public void cancelAliveHelper() {
@@ -95,17 +97,20 @@ public class AliveNotification {
                                        long when, boolean onGoing, boolean autoCancel, boolean onlyAlertOnce, PendingIntent pendingIntent) {
         NotificationCompat.Builder nb = new NotificationCompat.Builder(HelperConfig.CONTEXT);
         nb.setLargeIcon(largeIcon);
-        nb.setSmallIcon(smallIcon);
+        nb.setDefaults(Notification.DEFAULT_SOUND);
         nb.setContentTitle(contentTitle);
         nb.setContentText(contentText);
         nb.setTicker(ticker);
         nb.setWhen(when);
         nb.setOngoing(onGoing);
         //heads up http://www.jianshu.com/p/4d76b2bc8784
-        nb.setFullScreenIntent(pendingIntent, true);
+        //nb.setFullScreenIntent(pendingIntent, true);
         nb.setContentIntent(pendingIntent);
+
         nb.setAutoCancel(autoCancel);
         nb.setOnlyAlertOnce(onlyAlertOnce);
+        nb.setSmallIcon(smallIcon);
+
         return nb.build();
     }
 

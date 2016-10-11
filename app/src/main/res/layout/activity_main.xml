@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context="com.example.andyliu.alivehelperdemo.MainActivity">
+    tools:context="org.ancode.alivehelperdemo.MainActivity">
 
 
     <ScrollView

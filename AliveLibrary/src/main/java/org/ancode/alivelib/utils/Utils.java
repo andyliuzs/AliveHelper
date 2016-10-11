@@ -1,16 +1,12 @@
 package org.ancode.alivelib.utils;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 import android.util.TypedValue;
 
 
@@ -27,11 +23,21 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
 
-    public static Map<String, String> getMapDevMessage() {
+    /***
+     * 获取机型信息
+     *
+     * @return
+     */
+    public static Map<String, String> getProp() {
         Map<String, String> map = new HashMap<String, String>();
         map.put("model", Build.MODEL);
-        map.put("buildVersion", String.valueOf(Build.VERSION.SDK_INT));
-        Log.v(TAG, "model=" + map.get("model") + ",buildVersion=" + map.get("buildVersion"));
+        //ANDROID版本号
+        // map.put("buildVersion", String.valueOf(Build.VERSION.RELEASE));
+        //版本号
+        map.put("sysVersion", String.valueOf(Build.DISPLAY));
+        //编译版本号
+//        map.put("buildVersion", String.valueOf(Build.VERSION.SDK_INT));
+        Log.v(TAG, "model=" + map.get("model").toString() + ",sysVersion=" + map.get("sysVersion"));
         return map;
     }
 
@@ -51,46 +57,9 @@ public class Utils {
         return name;
     }
 
-    public static Bitmap drawableToBitmap(Drawable drawable) {
-
-        Bitmap bitmap = Bitmap.createBitmap(
-                drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(),
-                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
-
-        Canvas canvas = new Canvas(bitmap);
-
-        //canvas.setBitmap(bitmap);
-
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-
-        drawable.draw(canvas);
-
-        return bitmap;
-
-    }
-
-    public static Bitmap getAppIcon() {
-        PackageManager pm = HelperConfig.CONTEXT.getPackageManager();
-        Drawable icon = null;
-        try {
-            String packageName = HelperConfig.CONTEXT.getPackageName().toString();
-            icon = pm.getApplicationInfo(packageName,
-                    PackageManager.GET_META_DATA).loadIcon(pm);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return drawableToBitmap(icon);
-    }
 
 
-    public static int getThemeColor() {
-        TypedValue typedValue = new TypedValue();
 
-        TypedArray a = HelperConfig.CONTEXT.obtainStyledAttributes(HelperConfig.CONTEXT.getApplicationInfo().theme, new int[]{R.attr.colorPrimary});
-        int color = a.getColor(0, 0);
-        a.recycle();
-        return color;
-    }
+
 
 }

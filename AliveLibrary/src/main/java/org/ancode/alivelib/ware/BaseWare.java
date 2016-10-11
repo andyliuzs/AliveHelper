@@ -2,7 +2,6 @@ package org.ancode.alivelib.ware;
 
 import android.os.Handler;
 
-import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.notification.AliveNotification;
 
 /**
