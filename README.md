@@ -10,7 +10,7 @@ AliveHelper防杀助手,统计应用使用率.
 ###2.Application中配置防杀助手(无耗时操作)
 
         //初始化操作
-        AliveHelper.init(getApplicationContext());//初始化**(必须项)**
+        AliveHelper.init(getApplicationContext());//初始化(必须项)
         AliveHelper.setNotifySmallIcon(R.drawable.alive_helper_small_icon);//如果要弹出通知,需开发者提供应用小图标id
         AliveHelper.setDebug(true);//是否打印防杀助手log
         AliveHelper.setThemeColor(R.color.alive_dialog_btn_border_color);//手动设置展示界面的主色调
@@ -29,4 +29,4 @@ AliveHelper防杀助手,统计应用使用率.
 
         AliveHelper.getHelper().openAliveCount(jsonObject.toString());//开启应用使用率统计
 
-        *注意:openAliveCount(String info),info格式为json,json内参数内容不固定,需讨论.
+*注意:openAliveCount(String info),info格式为json,json内参数内容不固定,需讨论.
