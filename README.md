@@ -17,7 +17,7 @@ AliveHelper防杀助手,统计应用使用率.
         AliveHelper.useAnet(false); //是否使用原网环境
 ###3.方法使用
 
-        **功能类,可以在Application初始化完成之后,任意地方使用,根据实际场景进行使用**
+        功能类,可以在Application初始化完成之后,任意地方使用,根据实际场景进行使用
 
         //*****开启使用率统计相关******//
         JSONObject jsonObject = new JSONObject();
@@ -36,6 +36,7 @@ AliveHelper防杀助手,统计应用使用率.
         AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());
         AliveHelper.getHelper().openAliveStats();
 
-        //AliveHelper.getHelper().closeAliveStats();//关闭统计
+        //关闭统计
+        //AliveHelper.getHelper().closeAliveStats();
 
         - 注意:openAliveStats(jsonObject.toString())与setAliveStatsInfo(String info),info格式为json,json内参数内容不固定,需讨论.
