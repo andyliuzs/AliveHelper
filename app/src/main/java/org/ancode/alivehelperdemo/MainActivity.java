@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         registerBroadCast();
 
-        initPermission();
+        //initPermission();
     }
 
     private void initPermission() {
