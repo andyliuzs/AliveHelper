@@ -1,7 +1,6 @@
 package org.ancode.alivelib.utils;
 
 import org.ancode.alivelib.config.HelperConfig;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,17 +10,14 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
  * Created by andyliu on 16-10-8.
  */
-public class CountAliveUtils {
-    public static final String TAG = CountAliveUtils.class.getSimpleName();
-    public static final String COUNT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+public class AliveStatsUtils {
+    public static final String TAG = AliveStatsUtils.class.getSimpleName();
+    public static final String STATS_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String FILE_NAME_FORMAT = "yyyy-MM-dd";
 
 
@@ -48,7 +44,7 @@ public class CountAliveUtils {
      * @return
      */
     public static long getTimeDiffer(String startTime, String endTime) {
-        SimpleDateFormat format = new SimpleDateFormat(COUNT_DATE_FORMAT);
+        SimpleDateFormat format = new SimpleDateFormat(STATS_DATE_FORMAT);
         try {
             long start = format.parse(startTime).getTime();
             long end = format.parse(endTime).getTime();
@@ -78,9 +74,9 @@ public class CountAliveUtils {
      *
      * @return
      */
-    public static List<String> getAcResult() {
+    public static List<String> getAliveStatsResult() {
         List<String> result = new ArrayList<String>();
-        File file = new File(HelperConfig.CONTEXT.getFilesDir(), HelperConfig.ALIVE_COUNT_FILE_NAME);
+        File file = new File(HelperConfig.CONTEXT.getFilesDir(), HelperConfig.ALIVE_STATS_FILE_NAME);
 
         if (!file.exists()) {
             return result;
@@ -117,7 +113,7 @@ public class CountAliveUtils {
      */
     public static List<Long[]> getTimeToLive() {
         List<Long[]> result = new ArrayList<Long[]>();
-        File file = new File(HelperConfig.CONTEXT.getFilesDir(), HelperConfig.ALIVE_COUNT_FILE_NAME);
+        File file = new File(HelperConfig.CONTEXT.getFilesDir(), HelperConfig.ALIVE_STATS_FILE_NAME);
 
         if (!file.exists()) {
             return result;
@@ -150,7 +146,7 @@ public class CountAliveUtils {
                 if (beforeLine == nowLine) {
                     continue;
                 } else {
-                    if (check2time(beforeLine, nowLine, HelperConfig.CHECK_COUNT_DIFFER)) {
+                    if (check2time(beforeLine, nowLine, HelperConfig.CHECK_STATS_DIFFER)) {
                         endTime = nowLine;
                     } else {
                         timeArray = new Long[2];
@@ -190,7 +186,7 @@ public class CountAliveUtils {
     public static float getAlivePercent() {
         //获取上一天当前时间
         float percent = 0;
-        List<Long[]> result = CountAliveUtils.getTimeToLive();
+        List<Long[]> result = AliveStatsUtils.getTimeToLive();
         long allTime = 0;
         long aliveTime = 0;
         if (result.size() > 0) {

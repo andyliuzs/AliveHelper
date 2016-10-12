@@ -9,25 +9,15 @@ import android.net.NetworkInfo;
 
 import org.ancode.alivelib.config.HelperConfig;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * 跟网络相关的工具类
  */
 public class NetUtils {
-
-    /**
-     * 判断是否是wifi连接
-     */
-    public static boolean isWifiConnect(Context context) {
-        if (context == null) {
-            return false;
-        }
-
-        ConnectivityManager cm = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if (cm == null)
-            return false;
-        return cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
-    }
 
 
     /***
@@ -36,11 +26,57 @@ public class NetUtils {
      * @return
      */
     public static String getNetStatus(Context context) {
-        if (isWifiConnect(context)) {
-            return "wifi";
-        } else {
-            return "3g";
+
+        ConnectivityManager cm = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (cm == null) {
+            return "close";
         }
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return "close";
+        } else {
+            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                return "wifi";
+            } else {
+                return "3g";
+            }
+        }
+    }
+
+
+    public static final boolean ping(String domain) {
+
+        String result = null;
+        try {
+            Process p = Runtime.getRuntime().exec("ping -c 3 -w 100 " + domain);// ping网址3次
+            // 读取ping的内容，可以不加
+            InputStream input = p.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            StringBuffer stringBuffer = new StringBuffer();
+            String content = "";
+            while ((content = in.readLine()) != null) {
+                stringBuffer.append(content);
+            }
+            Log.d("------ping-----", "result content : " + stringBuffer.toString());
+            // ping的状态
+            int status = p.waitFor();
+            if (status == 0) {
+                result = "success";
+                return true;
+            } else {
+                result = "failed";
+            }
+        } catch (IOException e) {
+            result = "IOException";
+        } catch (InterruptedException e) {
+            result = "InterruptedException";
+        } finally {
+            Log.d("----result---", "result = " + result);
+        }
+        return false;
+
+
     }
 
     /**

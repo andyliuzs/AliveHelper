@@ -36,8 +36,21 @@ public class AliveHelper {
             HelperConfig.CONTEXT = context;
             helper = new AliveHelper();
         }
+//        initCrash(context);
         return helper;
     }
+
+
+//    /***
+//     * 初始化crash
+//     *
+//     * @param context
+//     */
+//    private static void initCrash(Context context) {
+//        AliveHelperCrash handler = AliveHelperCrash.getInstance();
+//        handler.init(context);
+//        Thread.setDefaultUncaughtExceptionHandler(handler);
+//    }
 
 
     /**
@@ -112,26 +125,49 @@ public class AliveHelper {
      * { "device":"htc", "os":"系统版本号","id":"13018211911"}
      * </p>
      *
+     * @param
+     * @return
+     */
+    public void openAliveStats(String info) {
+        setAliveStatsInfo(info);
+        openAliveStats();
+    }
+
+    public void openAliveStats() {
+        Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
+        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.OPEN_ALIVE_STATS_SERVICE_ACTION);
+        HelperConfig.CONTEXT.startService(intent);
+    }
+
+    /***
+     * 设置aliveStatsInfo
+     * <p>
+     * 参数说明
+     * <br/>
+     * info是为了确保设置的信息为唯一.内容格式不固定,但必须是json字符串
+     * <br/>
+     * 举例
+     * <br/>
+     * { "device":"htc", "os":"系统版本号","id":"13018211911"}
+     * </p>
+     *
      * @param info
      * @return
      */
-    public AliveHelper openAliveCount(String info) {
+    public AliveHelper setAliveStatsInfo(String info) {
         if (TextUtils.isEmpty(info)) {
             throw new RuntimeException("info is null");
         }
-        SPUtils.getInstance().setACUploadInfo(info);
-        Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
-        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.OPEN_ALIVE_COUNT_SERVICE_ACTION);
-        HelperConfig.CONTEXT.startService(intent);
+        SPUtils.getInstance().setASUploadInfo(info);
         return this;
     }
 
     /***
      * 关闭保活统计服务
      */
-    public void closeAliveCount() {
+    public void closeAliveStats() {
         Intent intent = new Intent(HelperConfig.CONTEXT, AliveHelperService.class);
-        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.CLOSE_ALIVE_COUNT_SERVICE_ACTION);
+        intent.putExtra(AliveHelperService.ACTION, AliveHelperService.CLOSE_ALIVE_STATS_SERVICE_ACTION);
         HelperConfig.CONTEXT.startService(intent);
     }
 
@@ -142,7 +178,7 @@ public class AliveHelper {
      * @param warningPoint
      * @return
      */
-    public AliveHelper openAliveWarning(float warningPoint) {
+    public void openAliveWarning(float warningPoint) {
         if (warningPoint < 0 || warningPoint > 1) {
             throw new RuntimeException("warning point range of [0-1]. your settings are" + warningPoint);
         }
@@ -152,7 +188,6 @@ public class AliveHelper {
         intent.putExtra(AliveHelperService.ACTION, AliveHelperService.OPEN_ALIVE_WARNING_SERVICE_ACTION);
         HelperConfig.CONTEXT.startService(intent);
 
-        return this;
     }
 
     /****

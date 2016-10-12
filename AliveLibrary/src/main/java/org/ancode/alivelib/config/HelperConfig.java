@@ -39,16 +39,16 @@ public class HelperConfig {
     /***
      * APP存活统计频率
      */
-    public static final int ALIVE_COUNT_RATE = 30 * 1000;
+    public static final int ALIVE_STATS_RATE = 30 * 1000;
     /**
      * 时间相差有效值
      */
-    public static final int CHECK_COUNT_DIFFER = 35 * 1000;
+    public static final int CHECK_STATS_DIFFER = 35 * 1000;
 
     /***
-     * alivecount存储文件名称
+     * aliveStats存储文件名称
      */
-    public static final String ALIVE_COUNT_FILE_NAME = "alive_cout_file";
+    public static final String ALIVE_STATS_FILE_NAME = "alive_cout_file";
     /***
      * 应用默认警告点
      * 0.0-1.0
@@ -60,7 +60,13 @@ public class HelperConfig {
     public static int SMALL_ICON_ID = -1;
 
     /**
-     * aliveCount上传数据频率 单位/小时
+     * aliveStats上传数据频率 单位/小时
      */
-    public static final int UPLOAD_ALIVE_COUNT_RATE = 1;
+    public static final int UPLOAD_ALIVE_STATS_RATE = 1;
+
+
+    /***
+     * crash文件名
+     */
+    public static final String ALIVE_HELPER_CRASH_FILE_NAME = "alive_helper_crash";
 }

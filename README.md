@@ -15,19 +15,27 @@ AliveHelper防杀助手,统计应用使用率.
         AliveHelper.setDebug(true);//是否打印防杀助手log
         AliveHelper.setThemeColor(R.color.alive_dialog_btn_border_color);//手动设置展示界面的主色调
         AliveHelper.useAnet(false); //是否使用原网环境
+###3.方法使用
 
-        //开启功能类
+        **功能类,可以在Application初始化完成之后,任意地方使用,根据实际场景进行使用**
 
+        //*****开启使用率统计相关******//
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("device", "htc");
-            jsonObject.put("os", "你的手机系统版本号");
-            jsonObject.put("id", "13018211911");
+            jsonObject.put("device", Build.MODEL);
+            jsonObject.put("os", Build.DISPLAY);
+            //如果是加密电话
+            jsonObject.put("phone", "13018211911");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //开启应用使用率统计
-        AliveHelper.getHelper().openAliveCount(jsonObject.toString());
-        
-        - 注意:openAliveCount(String info),info格式为json,json内参数内容不固定,需讨论.
+        //开启统计
+        AliveHelper.getHelper().openAliveStats(jsonObject.toString());
+        或者使用
+        AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());
+        AliveHelper.getHelper().openAliveStats();
+
+        //AliveHelper.getHelper().closeAliveStats();//关闭统计
+
+        - 注意:openAliveStats(jsonObject.toString())与setAliveStatsInfo(String info),info格式为json,json内参数内容不固定,需讨论.

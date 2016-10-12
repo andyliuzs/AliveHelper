@@ -8,7 +8,8 @@ import android.os.Message;
 
 import org.ancode.alivelib.AliveHelper;
 import org.ancode.alivelib.config.HelperConfig;
-import org.ancode.alivelib.utils.CountAliveUtils;
+import org.ancode.alivelib.config.HttpUrlConfig;
+import org.ancode.alivelib.utils.AliveStatsUtils;
 import org.ancode.alivelib.utils.DateTimeUtils;
 import org.ancode.alivelib.utils.HttpUtils;
 import org.ancode.alivelib.utils.Log;
@@ -30,24 +31,24 @@ import java.util.TimerTask;
 public class AliveHelperService extends Service {
     public static final String ACTION = "action";
 
-    public static final String OPEN_ALIVE_COUNT_SERVICE_ACTION = "org.ancode.alivelib.service.OPEN_ALIVE_COUNT_SERVICE";
+    public static final String OPEN_ALIVE_STATS_SERVICE_ACTION = "org.ancode.alivelib.service.OPEN_ALIVE_STATS_SERVICE";
     public static final String OPEN_ALIVE_WARNING_SERVICE_ACTION = "org.ancode.alivelib.service.OPEN_ALIVE_WARNING_SERVICE";
 
-    public static final String CLOSE_ALIVE_COUNT_SERVICE_ACTION = "org.ancode.alivelib.service.CLOSE_ALIVE_COUNT_SERVICE";
+    public static final String CLOSE_ALIVE_STATS_SERVICE_ACTION = "org.ancode.alivelib.service.CLOSE_ALIVE_STATS_SERVICE_ACTION";
     public static final String CLOSE_ALIVE_WARNING_SERVICE_ACTION = "org.ancode.alivelib.service.CLOSE_ALIVE_WARNING_SERVICE";
 
     private final int WARNING_TIME = 1000 * 60 * 30;
     private static final String TAG = AliveHelperService.class.getSimpleName();
-    private Timer aliveCountTimer = null, warningTimer = null;
+    private Timer aliveStatsTimer = null, warningTimer = null;
 
     //文件写入
-    private File aliveCountfile = null;
+    private File aliveStatsfile = null;
     private FileWriter fileWriter = null;
     private BufferedWriter writer = null;
     //是否已经提示
     private boolean isNotify = false;
 
-    private boolean isFirstCount = true;
+    private boolean isFirstStats = true;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -57,23 +58,29 @@ public class AliveHelperService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        String action = intent.getStringExtra(ACTION);
-        switch (action) {
-            case OPEN_ALIVE_COUNT_SERVICE_ACTION:
-                openCountLiveTimer();
-                break;
-            case OPEN_ALIVE_WARNING_SERVICE_ACTION:
-                openWarningTimer();
-                break;
-            case CLOSE_ALIVE_COUNT_SERVICE_ACTION:
-                closeCountLiveTimer();
-                break;
-            case CLOSE_ALIVE_WARNING_SERVICE_ACTION:
-                closeWarningTimer();
-                break;
-            default:
-                throw new RuntimeException("no this action");
+        String action = null;
+        try {
+            action = intent.getStringExtra(ACTION);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        if (action != null) {
+            switch (action) {
+                case OPEN_ALIVE_STATS_SERVICE_ACTION:
+                    openStatsLiveTimer();
+                    break;
+                case OPEN_ALIVE_WARNING_SERVICE_ACTION:
+                    openWarningTimer();
+                    break;
+                case CLOSE_ALIVE_STATS_SERVICE_ACTION:
+                    closeStatsLiveTimer();
+                    break;
+                case CLOSE_ALIVE_WARNING_SERVICE_ACTION:
+                    closeWarningTimer();
+                    break;
+            }
+        }
+
         return super.onStartCommand(intent, START_STICKY, startId);
     }
 
@@ -82,30 +89,31 @@ public class AliveHelperService extends Service {
         super.onCreate();
     }
 
-    private void openCountLiveTimer() {
-        if (aliveCountTimer == null) {
-            Log.v(TAG, "---start count alive---");
-            aliveCountTimer = new Timer();
-            aliveCountTimer.schedule(new TimerTask() {
+    private void openStatsLiveTimer() {
+        if (aliveStatsTimer == null) {
+            Log.v(TAG, "---start Stats alive---");
+            aliveStatsTimer = new Timer();
+            aliveStatsTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     try {
-                        countAlive();
-                        isFirstCount = false;
+                        aliveStats();
+                        isFirstStats = false;
                     } catch (Exception e) {
                         e.printStackTrace();
+                        handler.sendEmptyMessage(REOPEN_ALIVE_STATS);
                     }
                 }
-            }, 0, HelperConfig.ALIVE_COUNT_RATE);
+            }, 2000, HelperConfig.ALIVE_STATS_RATE);
         }
     }
 
-    private void closeCountLiveTimer() {
-        if (aliveCountTimer != null) {
-            aliveCountTimer.purge();
-            aliveCountTimer.cancel();
-            aliveCountTimer = null;
-            Log.v(TAG, "---close count alive---");
+    private void closeStatsLiveTimer() {
+        if (aliveStatsTimer != null) {
+            aliveStatsTimer.purge();
+            aliveStatsTimer.cancel();
+            aliveStatsTimer = null;
+            Log.v(TAG, "---close Stats alive---");
         }
     }
 
@@ -122,14 +130,14 @@ public class AliveHelperService extends Service {
                             Log.v(TAG, "allready notificaton,do return");
                             return;
                         }
-                        while (isFirstCount) {
+                        while (isFirstStats) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
-                        float percent = CountAliveUtils.getAlivePercent();
+                        float percent = AliveStatsUtils.getAlivePercent();
                         if (percent >= 0) {
                             if (percent <= HelperConfig.WARNING_POINT) {
                                 handler.sendEmptyMessage(SHOW_NOTIFICATION);
@@ -137,14 +145,14 @@ public class AliveHelperService extends Service {
                             }
                         } else {
                             isNotify = true;
-                            Log.e(TAG, "no count yesterday, no warning!");
+                            Log.e(TAG, "no Stats yesterday, no warning!");
                         }
                         Log.v(TAG, "alive percent=" + percent + ",warning point=" + HelperConfig.WARNING_POINT);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            }, 0, WARNING_TIME);
+            }, 2000, WARNING_TIME);
         }
     }
 
@@ -159,18 +167,22 @@ public class AliveHelperService extends Service {
     }
 
     private static final int SHOW_NOTIFICATION = 0x101;
+    private static final int REOPEN_ALIVE_STATS = 0x102;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == SHOW_NOTIFICATION) {
                 AliveHelper.getHelper().notification(0);
+            } else if (msg.what == REOPEN_ALIVE_STATS) {
+                closeStatsLiveTimer();
+                openStatsLiveTimer();
             }
         }
     };
 
 
-    private void countAlive() {
+    private void aliveStats() {
         long nowTime = new Date().getTime();
         try {
             checkFileWriter();
@@ -184,27 +196,35 @@ public class AliveHelperService extends Service {
 
             //TODO[计算统计范围,超过一小时,将数据上传至服务器]
             //开始时间为0时重新赋值
-            long startTime = SPUtils.getInstance().getACBeginTime();
+            long startTime = SPUtils.getInstance().getASBeginTime();
             if (startTime == 0) {
-                SPUtils.getInstance().setACBeginTime(nowTime);
+                SPUtils.getInstance().setASBeginTime(nowTime);
                 startTime = nowTime;
             }
 
             //结束时间实时赋值
-            SPUtils.getInstance().setACEndTime(nowTime);
+            SPUtils.getInstance().setASEndTime(nowTime);
 
             float differTime = DateTimeUtils.getDifferHours(startTime, nowTime);
-            if (differTime >= HelperConfig.UPLOAD_ALIVE_COUNT_RATE) {
-                Log.v(TAG, "距离第一次统计时间" + differTime + "小时,开始上传服务器");
-                //开始上传
-                if (HttpUtils.uploadAliveCount(startTime, nowTime)) {
-                    Log.v(TAG, "----上传数据成功----");
-                    //交互成功修
-                    SPUtils.getInstance().setACBeginTime(0);
-                    deleteFile(HelperConfig.ALIVE_COUNT_FILE_NAME);
-                    clearFileWriter();
-                    Log.v(TAG, "----重置数据成功----");
+            if (differTime >= HelperConfig.UPLOAD_ALIVE_STATS_RATE) {
+                Log.v(TAG, "距离第一次统计时间" + differTime + "小时,准备上传服务器");
+                //网络检查
+                if (NetUtils.ping(HttpUrlConfig.ALIVE_STATS_POST_HOST)) {
+                    Log.v(TAG, "网络可用开始上传服务器");
+
+                    //开始上传
+                    if (HttpUtils.uploadAliveStats(startTime, nowTime)) {
+                        Log.v(TAG, "----上传数据成功----");
+                        //交互成功修
+                        SPUtils.getInstance().setASBeginTime(0);
+                        deleteFile(HelperConfig.ALIVE_STATS_FILE_NAME);
+                        clearFileWriter();
+                        Log.v(TAG, "----重置数据成功----");
+                    }
+                } else {
+                    Log.v(TAG, "网络不可用不能上传服务器");
                 }
+
             } else {
                 Log.v(TAG, "距离第一次统计时间" + differTime + "小时,不上传服务器");
             }
@@ -222,13 +242,13 @@ public class AliveHelperService extends Service {
     }
 
     public void checkFileWriter() throws Exception {
-        if (aliveCountfile == null) {
+        if (aliveStatsfile == null) {
 
-            aliveCountfile = new File(getFilesDir(), HelperConfig.ALIVE_COUNT_FILE_NAME);
+            aliveStatsfile = new File(getFilesDir(), HelperConfig.ALIVE_STATS_FILE_NAME);
 
-            if (!aliveCountfile.exists()) {
+            if (!aliveStatsfile.exists()) {
                 try {
-                    aliveCountfile.createNewFile();
+                    aliveStatsfile.createNewFile();
                 } catch (IOException e) {
                     Log.e(TAG, "create file error:" + e.getLocalizedMessage());
                     e.printStackTrace();
@@ -237,7 +257,7 @@ public class AliveHelperService extends Service {
         }
 
         if (fileWriter == null) {
-            fileWriter = new FileWriter(aliveCountfile, true);
+            fileWriter = new FileWriter(aliveStatsfile, true);
         }
         if (writer == null) {
             writer = new BufferedWriter(fileWriter);
@@ -257,7 +277,7 @@ public class AliveHelperService extends Service {
             Log.e(TAG, "close error:" + e.getLocalizedMessage());
             e.printStackTrace();
         }
-        aliveCountfile = null;
+        aliveStatsfile = null;
         fileWriter = null;
         writer = null;
     }
@@ -265,7 +285,8 @@ public class AliveHelperService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        closeCountLiveTimer();
+        Log.v(TAG, "AliveHelperService onDestroy");
+        closeStatsLiveTimer();
         closeWarningTimer();
         clearFileWriter();
     }

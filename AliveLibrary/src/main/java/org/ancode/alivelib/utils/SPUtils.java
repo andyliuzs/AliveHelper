@@ -40,24 +40,24 @@ public class SPUtils extends BaseSPUtils {
     /**
      * 统计开始时间
      */
-    private static final String ALIVE_COUNT_BEGIN_TIME = "alive_count_begin_time";
+    private static final String ALIVE_STATS_BEGIN_TIME = "alive_stats_begin_time";
 
     /**
      * 统计结束时间
      */
-    private static final String ALIVE_COUNT_END_TIME = "alive_count_end_time";
+    private static final String ALIVE_STATS_END_TIME = "alive_stats_end_time";
     /**
      * 终端信息（这里的格式不是确定，不同的app报名自己定义info格式）
      */
-    private static final String ALIVE_COUNT_UPLOAD_INFO = "alive_count_upload_info";
+    private static final String ALIVE_STATS_UPLOAD_INFO = "alive_stats_upload_info";
 
     /**
      * 获取统计开始时间
      *
      * @return
      */
-    public long getACBeginTime() {
-        return getLong(ALIVE_COUNT_BEGIN_TIME, 0);
+    public long getASBeginTime() {
+        return getLong(ALIVE_STATS_BEGIN_TIME, 0);
     }
 
     /**
@@ -65,8 +65,8 @@ public class SPUtils extends BaseSPUtils {
      *
      * @return
      */
-    public void setACBeginTime(long acStartTime) {
-        putLong(ALIVE_COUNT_BEGIN_TIME, acStartTime);
+    public void setASBeginTime(long asStartTime) {
+        putLong(ALIVE_STATS_BEGIN_TIME, asStartTime);
     }
 
     /**
@@ -74,8 +74,8 @@ public class SPUtils extends BaseSPUtils {
      *
      * @return
      */
-    public long getACEndTime() {
-        return getLong(ALIVE_COUNT_END_TIME, 0);
+    public long getASEndTime() {
+        return getLong(ALIVE_STATS_END_TIME, 0);
     }
 
 
@@ -84,8 +84,8 @@ public class SPUtils extends BaseSPUtils {
      *
      * @return
      */
-    public void setACEndTime(long acEndTime) {
-        putLong(ALIVE_COUNT_END_TIME, acEndTime);
+    public void setASEndTime(long asEndTime) {
+        putLong(ALIVE_STATS_END_TIME, asEndTime);
     }
 
     /***
@@ -93,8 +93,8 @@ public class SPUtils extends BaseSPUtils {
      *
      * @return
      */
-    public String getACUploadInfo() {
-        return getString(ALIVE_COUNT_UPLOAD_INFO, "");
+    public String getASUploadInfo() {
+        return getString(ALIVE_STATS_UPLOAD_INFO, "");
     }
 
     /**
@@ -102,7 +102,7 @@ public class SPUtils extends BaseSPUtils {
      *
      * @param uploadInfo
      */
-    public void setACUploadInfo(String uploadInfo) {
-        putString(ALIVE_COUNT_UPLOAD_INFO, uploadInfo);
+    public void setASUploadInfo(String uploadInfo) {
+        putString(ALIVE_STATS_UPLOAD_INFO, uploadInfo);
     }
 }

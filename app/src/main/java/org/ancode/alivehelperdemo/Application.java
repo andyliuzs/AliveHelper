@@ -1,5 +1,7 @@
 package org.ancode.alivehelperdemo;
 
+import android.os.Build;
+
 import org.ancode.alivelib.AliveHelper;
 import org.ancode.alivelib.utils.SPUtils;
 import org.json.JSONException;
@@ -32,22 +34,22 @@ public class Application extends android.app.Application {
 //        AliveHelper.setThemeColor(R.color.alive_dialog_btn_border_color);//手动设置展示界面的主色调
 //        AliveHelper.useAnet(false); //是否使用原网环境
 
-        //开启功能类
-
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("device", "htc");
-            jsonObject.put("os", "系统版本号");
-            jsonObject.put("id", "13018211911");
+            jsonObject.put("device", Build.MODEL);
+            jsonObject.put("os", Build.DISPLAY);
+            //如果是加密电话
+            jsonObject.put("phone", "13018211911");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //json格式参数代表上传数据的唯一标示(格式不固定)
-        AliveHelper.getHelper().openAliveCount(jsonObject.toString());//开启应用使用率统计
-        //*注意:openAliveCount(String info),info格式为json,json内参数内容不固定,需讨论.
 
 
-//        AliveHelper.getHelper().openAliveWarning(0.9f);
-        // *注意事项openAliveWarning(float warningPoint)参数值范围为[0-1]
+        AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());//json格式参数代表上传数据的唯一标示(格式不固定)
+        AliveHelper.getHelper().openAliveStats();//开启统计
+//        AliveHelper.getHelper().openAliveStats(jsonObject.toString());
+        //AliveHelper.getHelper().closeAliveStats();//关闭统计
+
+        //- 注意:setAliveStatsInfo(String info),info格式为json,json内参数内容不固定,需讨论.
     }
 }

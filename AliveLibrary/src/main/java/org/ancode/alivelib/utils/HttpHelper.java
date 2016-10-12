@@ -26,8 +26,8 @@ import java.util.Map;
  */
 public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
-    public static Map<String, HttpURLConnection> urlgetConnections = null;
-    public static Map<String, HttpURLConnection> urlpostConnections = null;
+//    public static Map<String, HttpURLConnection> urlgetConnections = null;
+//    public static Map<String, HttpURLConnection> urlpostConnections = null;
     public static final String CHARSET = "UTF-8";
 
     /**
@@ -69,10 +69,10 @@ public class HttpHelper {
             // 发送POST请求必须设置如下两行
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setDoInput(true);
-            if (urlpostConnections == null) {
-                urlpostConnections = new HashMap<String, HttpURLConnection>();
-            }
-            urlpostConnections.put(flag, httpURLConnection);
+//            if (urlpostConnections == null) {
+//                urlpostConnections = new HashMap<String, HttpURLConnection>();
+//            }
+//            urlpostConnections.put(flag, httpURLConnection);
 
             // 获取URLConnection对象对应的输出流
             printWriter = new PrintWriter(httpURLConnection.getOutputStream());
@@ -85,7 +85,7 @@ public class HttpHelper {
             if (responseCode != 200) {
                 Log.e(TAG, "错误 response=" + responseCode);
             } else {
-                Log.e(TAG, "发送post请求成功!");
+                Log.e(TAG, "请求成功!");
             }
             // 定义BufferedReader输入流来读取URL的ResponseData
             bufferedReader = new BufferedReader(new InputStreamReader(
@@ -119,7 +119,7 @@ public class HttpHelper {
 
         }
         Log.v(TAG, "返回数据=" + responseResult.toString());
-        urlpostConnections.remove(flag);
+//        urlpostConnections.remove(flag);
         return responseResult.toString();
     }
 
@@ -155,10 +155,10 @@ public class HttpHelper {
             httpURLConnection.setRequestProperty("Accept-Charset", CHARSET);
 //            httpURLConnection.setRequestProperty("Content-Length", String.valueOf(params.getBytes().length));
             httpURLConnection.connect();
-            if (urlpostConnections == null) {
-                urlpostConnections = new HashMap<String, HttpURLConnection>();
-            }
-            urlpostConnections.put(flag, httpURLConnection);
+//            if (urlpostConnections == null) {
+//                urlpostConnections = new HashMap<String, HttpURLConnection>();
+//            }
+//            urlpostConnections.put(flag, httpURLConnection);
             // 获取URLConnection对象对应的输出流
             out = new DataOutputStream(
                     httpURLConnection.getOutputStream());
@@ -173,7 +173,7 @@ public class HttpHelper {
             if (responseCode != 200) {
                 Log.e(TAG, "错误 response=" + responseCode);
             } else {
-                Log.e(TAG, "发送postJson请求成功!");
+                Log.v(TAG, "请求成功!");
             }
             // 定义BufferedReader输入流来读取URL的ResponseData
             bufferedReader = new BufferedReader(new InputStreamReader(
@@ -214,7 +214,7 @@ public class HttpHelper {
 
         }
         Log.v(TAG, "返回数据=" + responseResult.toString());
-        urlpostConnections.remove(flag);
+//        urlpostConnections.remove(flag);
         return responseResult.toString();
     }
 
@@ -255,10 +255,10 @@ public class HttpHelper {
             URL realUrl = new URL(url);
             // 打开和URL之间的连接
             HttpURLConnection conn = (HttpURLConnection) realUrl.openConnection();
-            if (urlgetConnections == null) {
-                urlgetConnections = new HashMap<String, HttpURLConnection>();
-            }
-            urlgetConnections.put(flag, conn);
+//            if (urlgetConnections == null) {
+//                urlgetConnections = new HashMap<String, HttpURLConnection>();
+//            }
+//            urlgetConnections.put(flag, conn);
             // 设置通用的请求属性
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
@@ -292,24 +292,24 @@ public class HttpHelper {
                 ex.printStackTrace();
             }
         }
-        urlgetConnections.remove(flag);
+//        urlgetConnections.remove(flag);
         return result;
     }
 
     public static void cancelAll() {
-        try {
-            if (urlgetConnections != null)
-                for (Map.Entry<String, HttpURLConnection> entry : urlgetConnections.entrySet()) {
-                    entry.getValue().disconnect();
-                }
-
-            if (urlpostConnections != null)
-                for (Map.Entry<String, HttpURLConnection> entry : urlpostConnections.entrySet()) {
-                    entry.getValue().disconnect();
-                }
-        } catch (Exception e) {
-            Log.e(TAG, "urlConnection disConnect error\n" + e.getLocalizedMessage());
-        }
+//        try {
+//            if (urlgetConnections != null)
+//                for (Map.Entry<String, HttpURLConnection> entry : urlgetConnections.entrySet()) {
+//                    entry.getValue().disconnect();
+//                }
+//
+//            if (urlpostConnections != null)
+//                for (Map.Entry<String, HttpURLConnection> entry : urlpostConnections.entrySet()) {
+//                    entry.getValue().disconnect();
+//                }
+//        } catch (Exception e) {
+//            Log.e(TAG, "urlConnection disConnect error\n" + e.getLocalizedMessage());
+//        }
 
     }
 

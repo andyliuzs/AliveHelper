@@ -81,14 +81,21 @@ public class HttpUtils {
     }
 
 
-    public static boolean uploadAliveCount(long beginTime, long endTime) {
+    public static boolean uploadAliveStats(long beginTime, long endTime) {
         String packageName = HelperConfig.CONTEXT.getPackageName().toString();
-        String info = SPUtils.getInstance().getACUploadInfo();
+        JSONObject info = null;
+        try {
+            info = new JSONObject(SPUtils.getInstance().getASUploadInfo());
+        } catch (JSONException e) {
+            Log.e(TAG, "用户设置的info解析出错");
+            e.printStackTrace();
+            return false;
+        }
 
         JSONObject uploadJson = new JSONObject();
         JSONObject statObject = new JSONObject();
         //统计数据
-        List<String> data = CountAliveUtils.getAcResult();
+        List<String> data = AliveStatsUtils.getAliveStatsResult();
 
         JSONArray dataArray = new JSONArray(data);
         try {
@@ -99,6 +106,7 @@ public class HttpUtils {
         } catch (JSONException e) {
             Log.e(TAG, "上传统计数据,参数初始化错误 'statObject'错误");
             e.printStackTrace();
+            return false;
         }
         try {
             uploadJson.put("app", packageName);
@@ -107,10 +115,11 @@ public class HttpUtils {
         } catch (JSONException e) {
             Log.e(TAG, "上传统计数据,参数初始化错误 'uploadJson'错误");
             e.printStackTrace();
+            return false;
         }
-        String response = HttpHelper.postJson(HttpUrlConfig.ALIVE_COUNT_POST_URL, uploadJson.toString(), "uploadCountTime");
+        String response = HttpHelper.postJson(HttpUrlConfig.ALIVE_STATS_POST_URL, uploadJson.toString(), "uploadStatsTime");
 
-        Log.v(TAG, "uploadCountTime response= " + response);
+        Log.v(TAG, "uploadStatsTime response= " + response);
         if (TextUtils.isEmpty(response)) {
             Log.e(TAG, "response is null");
             return false;
