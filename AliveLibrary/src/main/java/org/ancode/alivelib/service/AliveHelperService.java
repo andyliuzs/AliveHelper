@@ -14,7 +14,7 @@ import org.ancode.alivelib.utils.DateTimeUtils;
 import org.ancode.alivelib.utils.HttpUtils;
 import org.ancode.alivelib.utils.Log;
 import org.ancode.alivelib.utils.NetUtils;
-import org.ancode.alivelib.utils.SPUtils;
+import org.ancode.alivelib.utils.AliveSPUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -196,14 +196,14 @@ public class AliveHelperService extends Service {
 
             //TODO[计算统计范围,超过一小时,将数据上传至服务器]
             //开始时间为0时重新赋值
-            long startTime = SPUtils.getInstance().getASBeginTime();
+            long startTime = AliveSPUtils.getInstance().getASBeginTime();
             if (startTime == 0) {
-                SPUtils.getInstance().setASBeginTime(nowTime);
+                AliveSPUtils.getInstance().setASBeginTime(nowTime);
                 startTime = nowTime;
             }
 
             //结束时间实时赋值
-            SPUtils.getInstance().setASEndTime(nowTime);
+            AliveSPUtils.getInstance().setASEndTime(nowTime);
 
             float differTime = DateTimeUtils.getDifferHours(startTime, nowTime);
             if (differTime >= HelperConfig.UPLOAD_ALIVE_STATS_RATE) {
@@ -216,7 +216,7 @@ public class AliveHelperService extends Service {
                     if (HttpUtils.uploadAliveStats(startTime, nowTime)) {
                         Log.v(TAG, "----上传数据成功----");
                         //交互成功修
-                        SPUtils.getInstance().setASBeginTime(0);
+                        AliveSPUtils.getInstance().setASBeginTime(0);
                         deleteFile(HelperConfig.ALIVE_STATS_FILE_NAME);
                         clearFileWriter();
                         Log.v(TAG, "----重置数据成功----");

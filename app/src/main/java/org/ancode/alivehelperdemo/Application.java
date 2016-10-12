@@ -3,7 +3,6 @@ package org.ancode.alivehelperdemo;
 import android.os.Build;
 
 import org.ancode.alivelib.AliveHelper;
-import org.ancode.alivelib.utils.SPUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 

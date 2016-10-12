@@ -1,12 +1,12 @@
 package org.ancode.alivelib;
 
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
 import org.ancode.alivelib.listener.CheckCallBack;
-import org.ancode.alivelib.utils.SPUtils;
+import org.ancode.alivelib.utils.AliveSPUtils;
+import org.ancode.alivelib.utils.Log;
 import org.ancode.alivelib.ware.ActivityAliveWare;
 import org.ancode.alivelib.ware.BroadCastAliveWare;
 import org.ancode.alivelib.ware.CheckAliveWare;
@@ -15,7 +15,6 @@ import org.ancode.alivelib.ware.WebViewWare;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.notification.AliveNotification;
 import org.ancode.alivelib.service.AliveHelperService;
-import org.json.JSONObject;
 
 /**
  * Created by andyliu on 16-8-25.
@@ -158,7 +157,9 @@ public class AliveHelper {
         if (TextUtils.isEmpty(info)) {
             throw new RuntimeException("info is null");
         }
-        SPUtils.getInstance().setASUploadInfo(info);
+
+        AliveSPUtils.getInstance().setASUploadInfo(info);
+        Log.v("AliveHelper", "接收到info信息 info = " + info);
         return this;
     }
 

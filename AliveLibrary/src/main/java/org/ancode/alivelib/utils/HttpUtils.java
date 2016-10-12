@@ -85,7 +85,7 @@ public class HttpUtils {
         String packageName = HelperConfig.CONTEXT.getPackageName().toString();
         JSONObject info = null;
         try {
-            info = new JSONObject(SPUtils.getInstance().getASUploadInfo());
+            info = new JSONObject(AliveSPUtils.getInstance().getASUploadInfo());
         } catch (JSONException e) {
             Log.e(TAG, "用户设置的info解析出错");
             e.printStackTrace();

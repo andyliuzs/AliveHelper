@@ -9,11 +9,11 @@ import org.ancode.alivelib.config.HelperConfig;
 /**
  * Created by xf on 16-8-3.
  */
-public class SPUtils extends BaseSPUtils {
-    private static final String TAG = SPUtils.class.getSimpleName();
+public class AliveSPUtils extends BaseSPUtils {
+    private static final String TAG = AliveSPUtils.class.getSimpleName();
     private static final String SP_NAME = "alive_helper";
 
-    private static SPUtils spUtils;
+    private static AliveSPUtils spUtils;
     private SharedPreferences sp;
 
     @Override
@@ -21,15 +21,15 @@ public class SPUtils extends BaseSPUtils {
         return sp;
     }
 
-    private SPUtils() {
+    private AliveSPUtils() {
         sp = HelperConfig.CONTEXT.getSharedPreferences(SP_NAME, Context.MODE_MULTI_PROCESS);
     }
 
-    public static SPUtils getInstance() {
+    public static AliveSPUtils getInstance() {
         if (spUtils == null) {
-            synchronized (SPUtils.class) {
+            synchronized (AliveSPUtils.class) {
                 if (spUtils == null) {
-                    spUtils = new SPUtils();
+                    spUtils = new AliveSPUtils();
                 }
             }
         }
