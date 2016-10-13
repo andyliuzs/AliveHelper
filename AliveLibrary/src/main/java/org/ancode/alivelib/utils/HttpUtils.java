@@ -84,12 +84,15 @@ public class HttpUtils {
     public static boolean uploadAliveStats(long beginTime, long endTime) {
         String packageName = HelperConfig.CONTEXT.getPackageName().toString();
         JSONObject info = null;
+        String tag = AliveSPUtils.getInstance().getASTag();
         try {
             info = new JSONObject(AliveSPUtils.getInstance().getASUploadInfo());
         } catch (JSONException e) {
             Log.e(TAG, "用户设置的info解析出错");
-            e.printStackTrace();
-            return false;
+            throw new IllegalArgumentException("Your info is error ,Please set info");
+        }
+        if (TextUtils.isEmpty(tag)) {
+            throw new IllegalArgumentException("Your aliveTag is null ,Please set aliveTag");
         }
 
         JSONObject uploadJson = new JSONObject();
@@ -100,8 +103,7 @@ public class HttpUtils {
         JSONArray dataArray = new JSONArray(data);
         try {
             statObject.put("type", "alive");
-            statObject.put("begin_time", beginTime);
-            statObject.put("end_time", endTime);
+            statObject.put("tag", tag);
             statObject.putOpt("data", dataArray);
         } catch (JSONException e) {
             Log.e(TAG, "上传统计数据,参数初始化错误 'statObject'错误");

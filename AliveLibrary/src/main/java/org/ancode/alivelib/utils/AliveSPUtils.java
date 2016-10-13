@@ -50,6 +50,11 @@ public class AliveSPUtils extends BaseSPUtils {
      * 终端信息（这里的格式不是确定，不同的app报名自己定义info格式）
      */
     private static final String ALIVE_STATS_UPLOAD_INFO = "alive_stats_upload_info";
+    /**
+     * 终端信息（这里的格式不是确定，不同的app报名自己定义info格式）
+     */
+    private static final String ALIVE_STATS_TAG = "alive_stats_tag";
+
 
     /**
      * 获取统计开始时间
@@ -104,5 +109,24 @@ public class AliveSPUtils extends BaseSPUtils {
      */
     public void setASUploadInfo(String uploadInfo) {
         putString(ALIVE_STATS_UPLOAD_INFO, uploadInfo);
+    }
+
+
+    /***
+     * 获取统计标示
+     *
+     * @return
+     */
+    public String getASTag() {
+        return getString(ALIVE_STATS_TAG, "");
+    }
+
+    /**
+     * 设置统计标示
+     *
+     * @param tag
+     */
+    public void setASTag(String tag) {
+        putString(ALIVE_STATS_TAG, tag);
     }
 }

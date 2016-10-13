@@ -112,23 +112,15 @@ public class AliveHelper {
         }
     }
 
-    /**
+    /****
      * 开启保活统计服务
-     * <p>
-     * 参数说明
-     * <br/>
-     * info是为了确保设置的信息为唯一.内容格式不固定,但必须是json字符串
-     * <br/>
-     * 举例
-     * <br/>
-     * { "device":"htc", "os":"系统版本号","id":"13018211911"}
-     * </p>
      *
-     * @param
-     * @return
+     * @param info
+     * @param tag
      */
-    public void openAliveStats(String info) {
+    public void openAliveStats(String info, String tag) {
         setAliveStatsInfo(info);
+        setAliveTag(tag);
         openAliveStats();
     }
 
@@ -143,7 +135,7 @@ public class AliveHelper {
      * <p>
      * 参数说明
      * <br/>
-     * info是为了确保设置的信息为唯一.内容格式不固定,但必须是json字符串
+     * 内容格式不固定,但必须是json字符串
      * <br/>
      * 举例
      * <br/>
@@ -155,11 +147,34 @@ public class AliveHelper {
      */
     public AliveHelper setAliveStatsInfo(String info) {
         if (TextUtils.isEmpty(info)) {
-            throw new RuntimeException("info is null");
+            throw new IllegalArgumentException("info is null,you should set a json string");
         }
 
         AliveSPUtils.getInstance().setASUploadInfo(info);
         Log.v("AliveHelper", "接收到info信息 info = " + info);
+        return this;
+    }
+
+    /**
+     * 设置TAG
+     * <p>
+     * 参数说明
+     * <br/>
+     * tag like this:
+     * "MX:104601"
+     * "MH:13011021102"
+     * </p>
+     *
+     * @param tag
+     * @return
+     */
+    public AliveHelper setAliveTag(String tag) {
+        if (TextUtils.isEmpty(tag)) {
+            throw new IllegalArgumentException("tag is null");
+        }
+
+        AliveSPUtils.getInstance().setASTag(tag);
+        Log.v("AliveHelper", "接收到tag信息 tag = " + tag);
         return this;
     }
 

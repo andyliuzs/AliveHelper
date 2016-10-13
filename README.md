@@ -29,11 +29,12 @@ AliveHelper防杀助手,统计应用使用率.
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        String tag = "MH:13018211911";
         //开启统计
-        AliveHelper.getHelper().openAliveStats(jsonObject.toString());
+        AliveHelper.getHelper().openAliveStats(jsonObject.toString(),tag);
         或者使用
         AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());
+        AliveHelper.getHelper().setAliveTag(tag);
         AliveHelper.getHelper().openAliveStats();
 
         //关闭统计

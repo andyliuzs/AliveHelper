@@ -33,6 +33,7 @@ public class Application extends android.app.Application {
 //        AliveHelper.setThemeColor(R.color.alive_dialog_btn_border_color);//手动设置展示界面的主色调
 //        AliveHelper.useAnet(false); //是否使用原网环境
 
+        //*****开启使用率统计相关******//
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("device", Build.MODEL);
@@ -42,12 +43,17 @@ public class Application extends android.app.Application {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        String tag = "MH:13018211911";
+        //开启统计
+        AliveHelper.getHelper().openAliveStats(jsonObject.toString(),tag);
 
+        //或者使用
+        AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());
+        AliveHelper.getHelper().setAliveTag(tag);
+        AliveHelper.getHelper().openAliveStats();
 
-        AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());//json格式参数代表上传数据的唯一标示(格式不固定)
-        AliveHelper.getHelper().openAliveStats();//开启统计
-//        AliveHelper.getHelper().openAliveStats(jsonObject.toString());
-        //AliveHelper.getHelper().closeAliveStats();//关闭统计
+        //关闭统计
+        //AliveHelper.getHelper().closeAliveStats();
 
         //- 注意:setAliveStatsInfo(String info),info格式为json,json内参数内容不固定,需讨论.
     }
