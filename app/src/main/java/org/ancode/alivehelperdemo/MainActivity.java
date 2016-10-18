@@ -124,9 +124,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.showactivity:
-                //使用默认activity
                 AliveHelper.getHelper()
-                        .showAliveHelper();
+                        .showAliveUseGuide();
                 break;
 
             case R.id.go_activity_notification:

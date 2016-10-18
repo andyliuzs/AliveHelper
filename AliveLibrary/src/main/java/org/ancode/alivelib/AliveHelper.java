@@ -199,7 +199,7 @@ public class AliveHelper {
     /****
      * 显示防杀指南
      */
-    public void showAliveHelper() {
+    public void showAliveUseGuide() {
         new ActivityAliveWare().check();
     }
 
