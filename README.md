@@ -19,7 +19,7 @@ AliveHelper防杀助手,统计应用使用率.
 
         功能类,可以在Application初始化完成之后,任意地方使用,根据实际场景进行使用
 
-        //*****开启使用率统计相关******//
+####1.开启使用率统计相关
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("device", Build.MODEL);
@@ -41,3 +41,6 @@ AliveHelper防杀助手,统计应用使用率.
         //AliveHelper.getHelper().closeAliveStats();
 
         - 注意:openAliveStats(jsonObject.toString())与setAliveStatsInfo(String info),info格式为json,json内参数内容不固定,需讨论.
+####2.展示防杀指南相关接口
+        //**********初始化完成后可以用在任何地方******//
+        AliveHelper.getHelper().showAliveUseGuide();
