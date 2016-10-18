@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import org.ancode.alivelib.listener.CheckCallBack;
+import org.ancode.alivelib.activity.AliveStatsActivity;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.utils.AliveSPUtils;
+import org.ancode.alivelib.utils.IntentUtils;
 import org.ancode.alivelib.utils.Log;
 import org.ancode.alivelib.ware.ActivityAliveWare;
 import org.ancode.alivelib.ware.BroadCastAliveWare;
@@ -187,6 +189,28 @@ public class AliveHelper {
         HelperConfig.CONTEXT.startService(intent);
     }
 
+
+    public void check(StringCallBack cb) {
+        CheckAliveWare checkAliveWare = new CheckAliveWare();
+        checkAliveWare.setCheckCallBack(cb);
+        checkAliveWare.check();
+    }
+
+    /****
+     * 显示防杀指南
+     */
+    public void showAliveHelper() {
+        new ActivityAliveWare().check();
+    }
+
+    /***
+     * 显示保活统计
+     */
+    public void showAliveStats() {
+        HelperConfig.CONTEXT.startActivity(IntentUtils.getNormalActivity(AliveStatsActivity.class, HelperConfig.THEME_COLOR_ID, true));
+    }
+
+
     /***
      * 开启保活警告
      * <p>警告点,取值范围是[0-1]</p>
@@ -239,12 +263,6 @@ public class AliveHelper {
     }
 
 
-    public void check(CheckCallBack cb) {
-        CheckAliveWare checkAliveWare = new CheckAliveWare();
-        checkAliveWare.setCheckCallBack(cb);
-        checkAliveWare.check();
-    }
-
     /**
      * 显示notification
      *
@@ -262,9 +280,6 @@ public class AliveHelper {
         new AliveNotification().cancelAliveHelper();
     }
 
-    public void showActivity() {
-        new ActivityAliveWare().check();
-    }
 
     public void showWeb() {
         new WebViewWare().check();

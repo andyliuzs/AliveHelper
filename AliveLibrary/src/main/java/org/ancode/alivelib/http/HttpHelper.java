@@ -1,9 +1,8 @@
-package org.ancode.alivelib.utils;
+package org.ancode.alivelib.http;
 
 import android.text.TextUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.ancode.alivelib.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,9 +15,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.net.URLEncoder;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +24,7 @@ import java.util.Map;
  */
 public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
-//    public static Map<String, HttpURLConnection> urlgetConnections = null;
+    //    public static Map<String, HttpURLConnection> urlgetConnections = null;
 //    public static Map<String, HttpURLConnection> urlpostConnections = null;
     public static final String CHARSET = "UTF-8";
 
@@ -248,51 +246,75 @@ public class HttpHelper {
     /**
      * 向指定URL发送GET方法的请求
      */
-    public static String get(String url, String encode, String flag) {
+    public static String get(String urlStr, Map<String, String> map, String flag) {
+        HttpURLConnection connection = null;
+        BufferedReader bufferedReader = null;
         String result = "";
-        BufferedReader in = null;
+        StringBuffer params = new StringBuffer();
         try {
-            URL realUrl = new URL(url);
-            // 打开和URL之间的连接
-            HttpURLConnection conn = (HttpURLConnection) realUrl.openConnection();
-//            if (urlgetConnections == null) {
-//                urlgetConnections = new HashMap<String, HttpURLConnection>();
-//            }
-//            urlgetConnections.put(flag, conn);
-            // 设置通用的请求属性
-            conn.setRequestProperty("accept", "*/*");
-            conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "text/plain; charset=" + encode);
-            // 建立实际的连接
-            conn.connect();
-            // 获取所有响应头字段
-            Map<String, List<String>> map = conn.getHeaderFields();
-            // 遍历所有的响应头字段
-            for (String key : map.keySet()) {
-                System.out.println(key + "--->" + map.get(key));
+
+            // 组织请求参数
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry element = (Map.Entry) it.next();
+                params.append(element.getKey());
+                params.append("=");
+                params.append(URLEncoder.encode((String) element.getValue(), CHARSET).replace("+", "%20"));
+                params.append("&");
             }
-            // 定义BufferedReader输入流来读取URL的响应
-            in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                result += line;
+            if (params.length() > 0) {
+                params.deleteCharAt(params.length() - 1);
             }
-        } catch (Exception e) {
-            Log.e(TAG, " 发送GET请求出现异常！\n" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-        // 使用finally块来关闭输入流
-        finally {
-            try {
-                if (in != null) {
-                    in.close();
+            URL url = new URL(urlStr + "?" + params.toString());
+            Log.v(TAG, "get url=" + url);
+            connection = (HttpURLConnection) url.openConnection();
+            // 设置请求方法，默认是GET
+            connection.setRequestMethod("GET");
+            // 设置字符集
+            connection.setRequestProperty("Charset", CHARSET);
+            // 设置文件类型
+            connection.setRequestProperty("Content-Type", "text/xml; charset=" + CHARSET);
+            // 设置请求参数，可通过Servlet的getHeader()获取
+            if (connection.getResponseCode() == 200) {
+                InputStream is = connection.getInputStream();
+                // 定义BufferedReader输入流来读取URL的响应
+                bufferedReader = new BufferedReader(
+                        new InputStreamReader(is));
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.v(TAG, "result =" + result);
+                Log.v(TAG, "请求成功!");
+            } else {
+                Log.e(TAG, "错误 response=" + connection.getResponseCode());
             }
+
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
+
         }
-//        urlgetConnections.remove(flag);
         return result;
     }
 

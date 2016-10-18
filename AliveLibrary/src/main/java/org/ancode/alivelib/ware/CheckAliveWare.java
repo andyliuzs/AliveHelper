@@ -1,14 +1,13 @@
 package org.ancode.alivelib.ware;
 
-import android.os.Handler;
-import android.os.Message;
-import android.text.TextUtils;
-
-import org.ancode.alivelib.listener.CheckCallBack;
+import org.ancode.alivelib.http.HttpClient;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.notification.AliveNotification;
-import org.ancode.alivelib.utils.HttpUtils;
-import org.ancode.alivelib.utils.HttpHelper;
+import org.ancode.alivelib.http.HttpHelper;
 import org.ancode.alivelib.utils.Log;
+import org.ancode.alivelib.utils.Utils;
+
+import java.util.Map;
 
 /**
  * Created by andyliu on 16-8-30.
@@ -17,7 +16,7 @@ public class CheckAliveWare extends BaseWare {
 
     private static final String TAG = CheckAliveWare.class.getSimpleName();
     boolean cancel = false;
-    protected CheckCallBack checkCallBack = null;
+    protected StringCallBack stringCallBack = null;
     public static final String HTTP_CALL_FLAG = "http_call_flag";
 
     public CheckAliveWare() {
@@ -29,77 +28,38 @@ public class CheckAliveWare extends BaseWare {
         HttpHelper.cancelAll();
     }
 
-    private void getData(final Handler handler, final String flag) {
-        HttpUtils.getData(handler, flag);
+    private void getData(final String flag) {
+        Map<String, String> map = Utils.getProp();
+        HttpClient.getUrl(map, flag, stringCallBack);
+//        HttpUtils.getUrl(map, handler, flag);
     }
 
 
-    Handler getDataHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (cancel) {
-                if (checkCallBack != null) {
-
-                    checkCallBack.getDataError("this connect is cancel");
-                } else {
-                    Log.e(TAG, "checkCallBack is null_image");
-                }
-                return;
-            }
-            String data = msg.getData().getString(HttpUtils.GET_DATA_KEY);
-            if (!TextUtils.isEmpty(data)) {
-                if (msg.what == HttpUtils.GET_DATA_ERROR) {
-                    if (checkCallBack != null) {
-                        checkCallBack.getDataError(data);
-                    } else {
-                        Log.e(TAG, "checkCallBack is null_image");
-                    }
-                } else if (msg.what == HttpUtils.GET_DATA_WHAT) {
-                    if (checkCallBack != null) {
-
-                        checkCallBack.onGetData(data);
-                    } else {
-                        Log.e(TAG, "checkCallBack is null_image");
-                    }
-
-                }
-            } else {
-                if (checkCallBack != null) {
-                    checkCallBack.dataEmpty();
-                } else {
-                    Log.e(TAG, "checkCallBack is null_image");
-                }
-                Log.e(TAG, "获取数据失败");
-            }
-
-        }
-    };
 
 
-    public CheckAliveWare setCheckCallBack(CheckCallBack checkCallBack) {
-        this.checkCallBack = checkCallBack;
+    public CheckAliveWare setCheckCallBack(StringCallBack callBack) {
+        this.stringCallBack = callBack;
         return this;
     }
 
 
     /****
      * <p>
-     * 调用本方法之前必须调用setCheckCallBack(CheckCallBack checkCallBack)
+     * 调用本方法之前必须调用setCheckCallBack(StringCallBack stringCallBack)
      * </p>
      */
     @Override
     public void check() {
-        if (checkCallBack == null) {
-            throw new RuntimeException("checkCallBack is null_image");
+        if (stringCallBack == null) {
+            throw new RuntimeException("stringCallBack is null_image");
         } else {
-            getData(getDataHandler, HTTP_CALL_FLAG);
+            getData(HTTP_CALL_FLAG);
         }
     }
 
-    public CheckAliveWare check(CheckCallBack checkCallBack) {
-        this.checkCallBack = checkCallBack;
-        getData(getDataHandler, HTTP_CALL_FLAG);
+    public CheckAliveWare check(StringCallBack callBack) {
+        this.stringCallBack = callBack;
+        getData(HTTP_CALL_FLAG);
         return this;
     }
 

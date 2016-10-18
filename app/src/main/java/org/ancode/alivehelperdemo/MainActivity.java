@@ -14,11 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.ancode.alivehelperdemo.R;
 import org.ancode.alivelib.AliveHelper;
-import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.config.HelperConfig;
-import org.ancode.alivelib.utils.HttpHelper;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.utils.Log;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -30,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button showwebBtn;
     Button notificationGoActivity;
     TextView textview;
-
+    Button showAliveStats;
     //about broadcast
     public static final String BROADCAST_ACTION = "org.ancode.test.ACTION";
     private TestReceiver testReceiver;
@@ -103,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         notificationGoActivity.setOnClickListener(this);
         notificationGoActivity = (Button) findViewById(R.id.go_activity_notification);
         notificationGoActivity.setOnClickListener(this);
+        showAliveStats =(Button)findViewById(R.id.go_alive_stats_activity);
+        showAliveStats.setOnClickListener(this);
     }
 
     @Override
@@ -110,20 +110,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.onlygetdata:
                 AliveHelper.getHelper()
-                        .check(new CheckCallBack() {
+                        .check(new StringCallBack() {
                             @Override
-                            public void onGetData(String url) {
-                                textview.setText("CheckCallBack function url==" + url);
+                            public void onResponse(String response) {
+                                textview.setText("StringCallBack function url==" + response);
                             }
 
                             @Override
-                            public void dataEmpty() {
-                                textview.setText("CheckCallBack function url==" + null);
-                            }
-
-                            @Override
-                            public void getDataError(String error) {
-                                textview.setText("CheckCallBack function error\n" + error);
+                            public void error(String error) {
+                                textview.setText("StringCallBack function error\n" + error);
                             }
                         });
 
@@ -131,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.showactivity:
                 //使用默认activity
                 AliveHelper.getHelper()
-                        .showActivity();
+                        .showAliveHelper();
                 break;
 
             case R.id.go_activity_notification:
@@ -155,6 +150,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //指定action方法2
 //              AliveHelper.getHelper().sendBroadCast();
 
+                break;
+
+            case R.id.go_alive_stats_activity:
+                AliveHelper.getHelper().showAliveStats();
                 break;
 
         }

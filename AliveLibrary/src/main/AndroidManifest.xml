@@ -9,7 +9,9 @@
         <activity
             android:name=".activity.AliveHelperActivity"
             android:launchMode="singleInstance" />
-
+        <activity
+            android:name=".activity.AliveStatsActivity"
+            android:launchMode="singleInstance" />
         <!--<receiver android:name=".receiver.AliveDialogReceiver">-->
         <!--<intent-filter>-->
         <!--<action android:name="org.ancde.alivelib.SHOW_DIALOG_NOTIFICATION_ACTION" />-->

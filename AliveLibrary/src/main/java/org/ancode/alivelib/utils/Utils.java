@@ -34,10 +34,10 @@ public class Utils {
         //ANDROID版本号
         // map.put("buildVersion", String.valueOf(Build.VERSION.RELEASE));
         //版本号
-        map.put("sysVersion", String.valueOf(Build.DISPLAY));
+        map.put("version", String.valueOf(Build.DISPLAY));
         //编译版本号
 //        map.put("buildVersion", String.valueOf(Build.VERSION.SDK_INT));
-        Log.v(TAG, "model=" + map.get("model").toString() + ",sysVersion=" + map.get("sysVersion"));
+        Log.v(TAG, "model=" + map.get("model").toString() + ",version=" + map.get("version"));
         return map;
     }
 

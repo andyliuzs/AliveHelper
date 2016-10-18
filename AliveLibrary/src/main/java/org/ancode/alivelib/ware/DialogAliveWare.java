@@ -9,8 +9,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.WindowManager;
 
-import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.R;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.notification.AliveNotification;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.IntentUtils;
@@ -45,9 +45,9 @@ public class DialogAliveWare extends BaseWare {
 
     @Override
     public void check() {
-        new CheckAliveWare().check(new CheckCallBack() {
+        new CheckAliveWare().check(new StringCallBack() {
             @Override
-            public void onGetData(final String data) {
+            public void onResponse(String response) {
                 String title = "";
                 String appName = Utils.getAppName();
                 if (TextUtils.isEmpty(appName)) {
@@ -61,7 +61,7 @@ public class DialogAliveWare extends BaseWare {
                     WebViewDialog.Builder builder = new WebViewDialog.Builder(HelperConfig.CONTEXT.getApplicationContext())
                             .setTitle(title)
                             .setPositiveButtonTextColor(themeColor)
-                            .setUrl(data)
+                            .setUrl(response)
                             .setPositiveButton(HelperConfig.CONTEXT.getString(R.string.alive_close), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -87,20 +87,14 @@ public class DialogAliveWare extends BaseWare {
                     }
 
                 }
-
-
             }
 
             @Override
-            public void dataEmpty() {
-                Log.v(TAG, "获取的数据为空");
-            }
-
-            @Override
-            public void getDataError(String error) {
+            public void error(String error) {
                 Log.e(TAG, "获取数据错误\n" + error);
             }
         });
+
     }
 
     @Override
@@ -109,22 +103,17 @@ public class DialogAliveWare extends BaseWare {
             @Override
             public void handleMessage(Message message) {
                 if (message.what == SHOW_FLAG) {
-                    new CheckAliveWare().check(new CheckCallBack() {
+                    new CheckAliveWare().check(new StringCallBack() {
                         @Override
-                        public void onGetData(String data) {
-                            Intent showDialogIntent = IntentUtils.getBroadCast(HelperConfig.SHOW_DIALOG_NOTIFICATION_ACTION, data, themeColor);
+                        public void onResponse(String response) {
+                            Intent showDialogIntent = IntentUtils.getBroadCast(HelperConfig.SHOW_DIALOG_NOTIFICATION_ACTION, response, themeColor);
                             PendingIntent showDialogPi = PendingIntent.getBroadcast(HelperConfig.CONTEXT, 0, showDialogIntent, 0);
                             baseNotification.setPedingIntent(showDialogPi);
                             baseNotification.show();
                         }
 
                         @Override
-                        public void dataEmpty() {
-                            Log.v(TAG, "获取的数据为空");
-                        }
-
-                        @Override
-                        public void getDataError(String error) {
+                        public void error(String error) {
                             Log.e(TAG, "获取数据错误\n" + error);
                         }
                     });

@@ -3,6 +3,7 @@ package org.ancode.alivelib.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -11,21 +12,54 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import org.ancode.alivelib.AliveHelper;
 import org.ancode.alivelib.R;
+import org.ancode.alivelib.config.HelperConfig;
+import org.ancode.alivelib.config.HttpUrlConfig;
+import org.ancode.alivelib.http.HttpClient;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.utils.Log;
 
 /**
  * Created by andyliu on 16-8-24.
  */
-public class AliveHelperActivity extends BaseAliveHelperActivity {
+public class AliveHelperActivity extends BaseActivity {
     private static final String TAG = AliveHelperActivity.class.getSimpleName();
     private WebView webView;
     ProgressBar progressBar = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "AliveHelperActivity onCreate");
+
+    }
+
+    @Override
+    public void loadData() {
+        AliveHelper.getHelper().check(new StringCallBack() {
+            @Override
+            public void onResponse(String response) {
+                showLoading(false);
+                onRefresh(response);
+            }
+
+            @Override
+            public void error(String error) {
+                if (error.equals(HttpClient.ERROR_STR)) {
+                    showLoading(false);
+                    Log.v(TAG, "show default html");
+                    onRefresh(HttpUrlConfig.DEFAULT_WARNING_URL);
+                } else {
+                    showLoading(false);
+                    showErrorView(true);
+                    Log.e(TAG, "获取数据失败:\n" + error);
+                }
+
+            }
+
+        });
     }
 
 
@@ -37,6 +71,7 @@ public class AliveHelperActivity extends BaseAliveHelperActivity {
 
     @Override
     protected void initView() {
+        setTitle(String.format(getString(R.string.alive_activity_title), appName));
         progressBar = (ProgressBar) findViewById(R.id.progress);
         webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);

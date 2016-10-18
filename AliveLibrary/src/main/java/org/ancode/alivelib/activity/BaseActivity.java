@@ -7,19 +7,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import org.ancode.alivelib.AliveHelper;
-import org.ancode.alivelib.listener.CheckCallBack;
-import org.ancode.alivelib.utils.Utils;
-import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.R;
-import org.ancode.alivelib.utils.UiHelper;
+import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.Log;
+import org.ancode.alivelib.utils.UiHelper;
 
 /**
  * Created by andyliu on 16-8-24.
  */
-public abstract class BaseAliveHelperActivity extends Activity {
-    private static final String TAG = BaseAliveHelperActivity.class.getSimpleName();
+public abstract class BaseActivity extends Activity {
+    private static final String TAG = BaseActivity.class.getSimpleName();
     private View empty_view;
     private View error_view;
     private View loading_view;
@@ -27,10 +24,9 @@ public abstract class BaseAliveHelperActivity extends Activity {
     private View topView;
     private TextView titleView;
     protected String data = "";
-    private String appName;
     private int themeColor = -1;
     private boolean applyStatusColor;
-
+    protected String appName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +35,7 @@ public abstract class BaseAliveHelperActivity extends Activity {
         initBaseView();
         initView();
         loadData();
-        Log.v(TAG, "BaseAliveHelperActivity onCreate");
+        Log.v(TAG, "BaseActivity onCreate");
     }
 
     protected void initBaseData() {
@@ -57,27 +53,17 @@ public abstract class BaseAliveHelperActivity extends Activity {
         super.onResume();
     }
 
-    private void loadData() {
-        AliveHelper.getHelper().check(new CheckCallBack() {
-            @Override
-            public void onGetData(String data) {
-                showLoading(false);
-                onRefresh(data);
-            }
+    public abstract void loadData();
 
-            @Override
-            public void dataEmpty() {
-                showLoading(false);
-                showEmptyView(true);
-            }
 
-            @Override
-            public void getDataError(String e) {
-                showLoading(false);
-                showErrorView(true);
-                Log.e(TAG, "获取数据失败:\n" + e);
-            }
-        });
+    protected abstract int setLayout();
+
+    protected abstract void initView();
+
+    protected abstract void onRefresh(String data);
+
+    protected void setTitle(String title) {
+        titleView.setText(title);
     }
 
     public void onReLoad() {
@@ -87,13 +73,6 @@ public abstract class BaseAliveHelperActivity extends Activity {
         loadData();
     }
 
-    protected abstract int setLayout();
-
-    protected abstract void initView();
-
-    protected abstract void onRefresh(String data);
-
-
     protected void initBaseView() {
         empty_view = findViewById(R.id.base_alive_empty_view);
         error_view = findViewById(R.id.base_alive_error_view);
@@ -101,11 +80,7 @@ public abstract class BaseAliveHelperActivity extends Activity {
         topView = findViewById(R.id.top);
         titleView = (TextView) findViewById(R.id.title);
         closeBtn = findViewById(R.id.close);
-        if (!TextUtils.isEmpty(appName)) {
-            titleView.setText(String.format(getString(R.string.alive_activity_title), appName));
-        } else {
-            titleView.setText(String.format(getString(R.string.alive_activity_title), ""));
-        }
+
         setTimeColor();
 
         closeBtn.setOnClickListener(new View.OnClickListener() {

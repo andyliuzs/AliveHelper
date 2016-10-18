@@ -1,16 +1,21 @@
-package org.ancode.alivelib.utils;
+package org.ancode.alivelib.http;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import org.ancode.alivelib.config.Constants;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.config.HttpUrlConfig;
+import org.ancode.alivelib.utils.AliveSPUtils;
+import org.ancode.alivelib.utils.AliveStatsUtils;
+import org.ancode.alivelib.utils.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +28,16 @@ public class HttpUtils {
     public static final String GET_DATA_KEY = "get_data_key";
     public static final int GET_DATA_WHAT = 1;
     public static final int GET_DATA_ERROR = 2;
+    public static final String ERROR_STR = "data is null";
 
-    public static void getData(final Handler handler, final String flag) {
+    /**
+     * 获取警告 html页面
+     *
+     * @param params
+     * @param handler
+     * @param flag
+     */
+    public static void getUrl(final Map<String, String> params, final Handler handler, final String flag) {
 
         if (GETING_URL == true) {
             return;
@@ -33,54 +46,62 @@ public class HttpUtils {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = null;
+                String resultUrl = "";
                 try {
-
-                    Map<String, String> map = Utils.getProp();
-                    String postUrl = null;
+                    String url = "";
                     if (HelperConfig.USE_ANET) {
-                        postUrl = HttpUrlConfig.POST_URL_ANET6;
+                        url = HttpUrlConfig.GET_WARNING_HTML_ANET_URL;
                         Log.v("HttpUtils", "走IPV6");
                     } else {
-                        postUrl = HttpUrlConfig.POST_URL;
+                        url = HttpUrlConfig.GET_WARNING_HTML_URL;
                         Log.v("HttpUtils", "走IPV4");
                     }
-                    String data = HttpHelper.post(postUrl, map, flag);
-//                    String data = HttpHelper.get(HelperConfig.SERVER_URL, "utf-8", flag);
-
+                    String data = HttpHelper.get(url, params, flag);
+                    GETING_URL = false;
                     if (TextUtils.isEmpty(data)) {
-                        sendHandler(handler, GET_DATA_WHAT, url);
-                        GETING_URL = false;
+                        sendHandler(handler, GET_DATA_ERROR, "response is null");
                         return;
                     }
                     JSONObject jsonObj = new JSONObject(data);
-                    url = jsonObj.getString("url");
+                    if (jsonObj.has("result")) {
+                        if (jsonObj.get("result").toString().equals("ok")) {
+                            if (jsonObj.has("url")) {
+                                resultUrl = jsonObj.getString("url");
+                            } else {
+                                sendHandler(handler, GET_DATA_ERROR, "return url is null");
+                            }
 
-//                    Log.v(TAG, "GET DATA=" + url);
-                    GETING_URL = false;
+                        } else if (jsonObj.get("result").toString().equals("failed")) {
+                            sendHandler(handler, GET_DATA_ERROR, ERROR_STR);
+                            return;
+                        } else {
+                            sendHandler(handler, GET_DATA_ERROR, "result is failed");
+                            return;
+                        }
+                    } else {
+                        sendHandler(handler, GET_DATA_ERROR, "result is failed");
+                        return;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                     GETING_URL = false;
                     sendHandler(handler, GET_DATA_ERROR, e.getLocalizedMessage());
                     return;
                 }
-                sendHandler(handler, GET_DATA_WHAT, url);
+                sendHandler(handler, GET_DATA_WHAT, resultUrl);
                 GETING_URL = false;
             }
         }).start();
     }
 
 
-    private static void sendHandler(Handler handler, int what, String data) {
-        Bundle bundle = new Bundle();
-        bundle.putString(GET_DATA_KEY, data);
-        Message message = new Message();
-        message.setData(bundle);
-        message.what = what;
-        handler.sendMessage(message);
-    }
-
-
+    /***
+     * 提交aliveStats
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
     public static boolean uploadAliveStats(long beginTime, long endTime) {
         String packageName = HelperConfig.CONTEXT.getPackageName().toString();
         JSONObject info = null;
@@ -102,7 +123,7 @@ public class HttpUtils {
 
         JSONArray dataArray = new JSONArray(data);
         try {
-            statObject.put("type", "alive");
+            statObject.put("type", Constants.TYPE_ALIVE);
             statObject.put("tag", tag);
             statObject.putOpt("data", dataArray);
         } catch (JSONException e) {
@@ -119,7 +140,7 @@ public class HttpUtils {
             e.printStackTrace();
             return false;
         }
-        String response = HttpHelper.postJson(HttpUrlConfig.ALIVE_STATS_POST_URL, uploadJson.toString(), "uploadStatsTime");
+        String response = HttpHelper.postJson(HttpUrlConfig.POST_ALIVE_STATS_URL, uploadJson.toString(), "uploadStatsTime");
 
         Log.v(TAG, "uploadStatsTime response= " + response);
         if (TextUtils.isEmpty(response)) {
@@ -145,5 +166,47 @@ public class HttpUtils {
                 }
             }
         }
+    }
+
+
+    /**
+     * 查询aliveStats
+     *
+     * @param params
+     * @param handler
+     * @param flag
+     */
+    public static void queryAliveStats(final Map<String, String> params, final Handler handler, final String flag) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String url = HttpUrlConfig.QUERY_ALIVE_STATS_URL;
+
+                    String data = HttpHelper.get(url, params, flag);
+                    if (TextUtils.isEmpty(data)) {
+                        sendHandler(handler, GET_DATA_ERROR, "response is null");
+                        return;
+                    }
+                    sendHandler(handler, GET_DATA_WHAT, data);
+                    return;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendHandler(handler, GET_DATA_ERROR, e.getLocalizedMessage());
+                    return;
+                }
+            }
+        }).start();
+    }
+
+
+    private static void sendHandler(Handler handler, int what, String data) {
+        Bundle bundle = new Bundle();
+        bundle.putString(GET_DATA_KEY, data);
+        Message message = new Message();
+        message.setData(bundle);
+        message.what = what;
+        handler.sendMessage(message);
     }
 }

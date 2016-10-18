@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import org.ancode.alivelib.config.HelperConfig;
-import org.ancode.alivelib.listener.CheckCallBack;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.notification.AliveNotification;
 import org.ancode.alivelib.utils.IntentUtils;
 import org.ancode.alivelib.utils.Log;
@@ -20,23 +20,19 @@ public class WebViewWare extends BaseWare {
 
     @Override
     public void check() {
-        new CheckAliveWare().check(new CheckCallBack() {
+        new CheckAliveWare().check(new StringCallBack() {
             @Override
-            public void onGetData(String data) {
-                HelperConfig.CONTEXT.startActivity(IntentUtils.getNormalWeb(data));
-            }
-
-
-            @Override
-            public void dataEmpty() {
-                Log.v(TAG, "获取的数据为空");
+            public void onResponse(String response) {
+                HelperConfig.CONTEXT.startActivity(IntentUtils.getNormalWeb(response));
             }
 
             @Override
-            public void getDataError(String error) {
-                Log.e(TAG, "获取数据错误\n"+error);
+            public void error(String error) {
+                Log.e(TAG, "获取数据错误\n" + error);
             }
         });
+
+
     }
 
     @Override
@@ -45,23 +41,18 @@ public class WebViewWare extends BaseWare {
             @Override
             public void handleMessage(Message message) {
                 if (message.what == SHOW_FLAG) {
-                    new CheckAliveWare().check(new CheckCallBack() {
+                    new CheckAliveWare().check(new StringCallBack() {
                         @Override
-                        public void onGetData(String data) {
-                            baseNotification.show(IntentUtils.getNotifyWeb(data));
-                        }
-
-
-                        @Override
-                        public void dataEmpty() {
-                            Log.v(TAG, "获取的数据为空");
+                        public void onResponse(String response) {
+                            baseNotification.show(IntentUtils.getNotifyWeb(response));
                         }
 
                         @Override
-                        public void getDataError(String error) {
-                            Log.e(TAG, "获取数据错误\n"+error);
+                        public void error(String error) {
+                            Log.e(TAG, "获取数据错误\n" + error);
                         }
                     });
+
                 }
             }
         });

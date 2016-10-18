@@ -72,7 +72,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="弹出打开Activity的Notify" />
-
+            <Button
+                android:id="@+id/go_alive_stats_activity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="查看保活统计" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="20dp" />

@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
-import org.ancode.alivelib.listener.CheckCallBack;
 import org.ancode.alivelib.config.HelperConfig;
+import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.notification.AliveNotification;
 import org.ancode.alivelib.utils.IntentUtils;
 import org.ancode.alivelib.utils.Log;
@@ -43,22 +43,18 @@ public class BroadCastAliveWare extends BaseWare {
 
     @Override
     public void check() {
-        new CheckAliveWare().check(new CheckCallBack() {
+        new CheckAliveWare().check(new StringCallBack() {
             @Override
-            public void onGetData(String data) {
-                HelperConfig.CONTEXT.sendBroadcast(IntentUtils.getBroadCast(broadcastAction, data, -1));
+            public void onResponse(String response) {
+                HelperConfig.CONTEXT.sendBroadcast(IntentUtils.getBroadCast(broadcastAction, response, -1));
             }
 
             @Override
-            public void dataEmpty() {
-                Log.v(TAG, "获取的数据为空");
-            }
-
-            @Override
-            public void getDataError(String error) {
+            public void error(String error) {
                 Log.e(TAG, "获取数据错误\n" + error);
             }
         });
+
     }
 
     @Override
@@ -67,26 +63,21 @@ public class BroadCastAliveWare extends BaseWare {
             @Override
             public void handleMessage(Message message) {
                 if (message.what == SHOW_FLAG) {
-                    new CheckAliveWare().check(new CheckCallBack() {
+                    new CheckAliveWare().check(new StringCallBack() {
                         @Override
-                        public void onGetData(String data) {
-                            Intent broadCastIntent = IntentUtils.getBroadCast(broadcastAction, data, -1);
+                        public void onResponse(String response) {
+                            Intent broadCastIntent = IntentUtils.getBroadCast(broadcastAction, response, -1);
                             PendingIntent mpi = PendingIntent.getBroadcast(HelperConfig.CONTEXT, 0, broadCastIntent, 0);
                             baseNotification.setPedingIntent(mpi);
                             baseNotification.show();
                         }
 
-
                         @Override
-                        public void dataEmpty() {
-                            Log.v(TAG, "获取的数据为空");
-                        }
-
-                        @Override
-                        public void getDataError(String error) {
+                        public void error(String error) {
                             Log.e(TAG, "获取数据错误\n" + error);
                         }
                     });
+
                 }
             }
         });
