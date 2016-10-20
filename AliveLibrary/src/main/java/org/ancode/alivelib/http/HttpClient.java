@@ -17,7 +17,7 @@ public class HttpClient {
     public static final String TAG = HttpClient.class.getSimpleName();
     static boolean cancel = false;
     public static final String HTTP_CALL_FLAG = "http_call_flag";
-    public static final String ERROR_STR = "data is null";
+    public static final String DATA_IS_NULL = "data is null";
 
     /**
      * 查询统计结果
@@ -81,7 +81,7 @@ public class HttpClient {
                 }
             } else {
                 if (callBack != null) {
-                    callBack.error(ERROR_STR);
+                    callBack.error(DATA_IS_NULL);
                 } else {
                     Log.e(TAG, "StringCallBack is null_image");
                 }

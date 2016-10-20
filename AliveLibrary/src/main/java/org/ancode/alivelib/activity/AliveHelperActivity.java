@@ -47,7 +47,7 @@ public class AliveHelperActivity extends BaseActivity {
 
             @Override
             public void error(String error) {
-                if (error.equals(HttpClient.ERROR_STR)) {
+                if (error.equals(HttpClient.DATA_IS_NULL)) {
                     showLoading(false);
                     Log.v(TAG, "show default html");
                     onRefresh(HttpUrlConfig.DEFAULT_WARNING_URL);

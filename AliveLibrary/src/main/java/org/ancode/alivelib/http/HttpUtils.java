@@ -28,7 +28,6 @@ public class HttpUtils {
     public static final String GET_DATA_KEY = "get_data_key";
     public static final int GET_DATA_WHAT = 1;
     public static final int GET_DATA_ERROR = 2;
-    public static final String ERROR_STR = "data is null";
 
     /**
      * 获取警告 html页面
@@ -72,7 +71,7 @@ public class HttpUtils {
                             }
 
                         } else if (jsonObj.get("result").toString().equals("failed")) {
-                            sendHandler(handler, GET_DATA_ERROR, ERROR_STR);
+                            sendHandler(handler, GET_DATA_ERROR, HttpClient.DATA_IS_NULL);
                             return;
                         } else {
                             sendHandler(handler, GET_DATA_ERROR, "result is failed");
