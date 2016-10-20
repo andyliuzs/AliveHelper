@@ -96,7 +96,6 @@ public class AliveNotification {
     private Notification createBuilder(Bitmap largeIcon, int smallIcon, CharSequence contentTitle, CharSequence contentText, CharSequence ticker,
                                        long when, boolean onGoing, boolean autoCancel, boolean onlyAlertOnce, PendingIntent pendingIntent) {
         NotificationCompat.Builder nb = new NotificationCompat.Builder(HelperConfig.CONTEXT);
-        nb.setLargeIcon(largeIcon);
         nb.setDefaults(Notification.DEFAULT_SOUND);
         nb.setContentTitle(contentTitle);
         nb.setContentText(contentText);
@@ -110,7 +109,9 @@ public class AliveNotification {
         nb.setAutoCancel(autoCancel);
         nb.setOnlyAlertOnce(onlyAlertOnce);
         nb.setSmallIcon(smallIcon);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            nb.setLargeIcon(largeIcon);
+        }
         return nb.build();
     }
 
