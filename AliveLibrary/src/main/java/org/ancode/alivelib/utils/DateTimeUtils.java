@@ -13,10 +13,10 @@ public class DateTimeUtils {
 
     public static final String DEFAULT_FORMAT = "yyyy-MM-dd hh:mm:ss";
 
-    /***
+    /**
      * 格式化指定日期
-     *
      * @param date
+     * @param format
      * @return
      */
     public static String timeFormat(long date, String format) {
@@ -32,10 +32,10 @@ public class DateTimeUtils {
     }
 
 
-    /***
+    /**
      * 格式化指定日期
-     *
      * @param date
+     * @param format
      * @return
      */
     public static String timeFormat(Date date, String format) {
@@ -50,10 +50,11 @@ public class DateTimeUtils {
         return fm.format(gc.getTime());
     }
 
-    /**
+    /***
      * 获取前指定天数前的日期
      *
      * @param date
+     * @param differDay
      * @return
      */
     public static Date getBeforeDate(Date date, int differDay) {

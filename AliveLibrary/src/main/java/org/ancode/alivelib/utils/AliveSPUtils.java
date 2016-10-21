@@ -68,7 +68,7 @@ public class AliveSPUtils extends BaseSPUtils {
     /**
      * 设置统计开始时间
      *
-     * @return
+     *
      */
     public void setASBeginTime(long asStartTime) {
         putLong(ALIVE_STATS_BEGIN_TIME, asStartTime);
@@ -86,8 +86,6 @@ public class AliveSPUtils extends BaseSPUtils {
 
     /**
      * 设置统计结束时间
-     *
-     * @return
      */
     public void setASEndTime(long asEndTime) {
         putLong(ALIVE_STATS_END_TIME, asEndTime);

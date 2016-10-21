@@ -18,12 +18,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import org.ancode.alivelib.R;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.Log;
 import org.ancode.alivelib.utils.UiHelper;
-import org.ancode.alivelib.utils.Utils;
 
 
 public class WebViewDialog extends Dialog {

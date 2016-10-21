@@ -24,6 +24,9 @@ public class AliveStatsUtils {
     /**
      * 检测两数据之间差值是否有效
      *
+     * @param startTime
+     * @param endTime
+     * @param differ
      * @return
      */
     public static boolean check2time(long startTime, long endTime, Integer differ) {
@@ -59,7 +62,6 @@ public class AliveStatsUtils {
 
     /**
      * 获取时间差
-     *
      * @param startTime
      * @param endTime
      * @return

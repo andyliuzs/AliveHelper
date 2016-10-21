@@ -28,9 +28,9 @@ public class BroadCastAliveWare extends BaseWare {
 
     /**
      * 自定义广播ACTION
-     * <p/>
+     *
      * 默认ACTION=HelperConfig.BROADCAST_ACTION
-     * <p/>
+     *
      *
      * @param action
      * @return

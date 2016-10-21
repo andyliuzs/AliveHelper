@@ -136,11 +136,11 @@ public class AliveHelper {
      * 设置aliveStatsInfo
      * <p>
      * 参数说明
-     * <br/>
+     *
      * 内容格式不固定,但必须是json字符串
-     * <br/>
+     *
      * 举例
-     * <br/>
+     *
      * { "device":"htc", "os":"系统版本号","id":"13018211911"}
      * </p>
      *
@@ -161,7 +161,7 @@ public class AliveHelper {
      * 设置TAG
      * <p>
      * 参数说明
-     * <br/>
+     *
      * tag like this:
      * "MX:104601"
      * "MH:13011021102"
@@ -216,7 +216,7 @@ public class AliveHelper {
      * <p>警告点,取值范围是[0-1]</p>
      *
      * @param warningPoint
-     * @return
+     *
      */
     public void openAliveWarning(float warningPoint) {
         if (warningPoint < 0 || warningPoint > 1) {

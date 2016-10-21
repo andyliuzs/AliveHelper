@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-
 import org.ancode.alivelib.R;
 import org.ancode.alivelib.config.HelperConfig;
 import org.ancode.alivelib.utils.Log;
