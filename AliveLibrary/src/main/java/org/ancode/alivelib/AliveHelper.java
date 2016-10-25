@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import org.ancode.alivelib.activity.AliveStatsActivity;
+import org.ancode.alivelib.bean.BaseStatsInfo;
 import org.ancode.alivelib.listener.StringCallBack;
 import org.ancode.alivelib.utils.AliveSPUtils;
 import org.ancode.alivelib.utils.IntentUtils;
@@ -120,9 +121,21 @@ public class AliveHelper {
      * @param info
      * @param tag
      */
+    @Deprecated
     public void openAliveStats(String info, String tag) {
         setAliveStatsInfo(info);
         setAliveTag(tag);
+        openAliveStats();
+    }
+
+    /***
+     * 开启保活统计服务
+     *
+     * @param baseStatsInfo
+     */
+    public void openAliveStats(BaseStatsInfo baseStatsInfo) {
+        setAliveStatsInfo(baseStatsInfo.getStatsInfo().toString());
+        setAliveTag(baseStatsInfo.getTag());
         openAliveStats();
     }
 
@@ -136,11 +149,11 @@ public class AliveHelper {
      * 设置aliveStatsInfo
      * <p>
      * 参数说明
-     *
+     * <p>
      * 内容格式不固定,但必须是json字符串
-     *
+     * <p>
      * 举例
-     *
+     * <p>
      * { "device":"htc", "os":"系统版本号","id":"13018211911"}
      * </p>
      *
@@ -161,7 +174,7 @@ public class AliveHelper {
      * 设置TAG
      * <p>
      * 参数说明
-     *
+     * <p>
      * tag like this:
      * "MX:104601"
      * "MH:13011021102"
@@ -216,7 +229,6 @@ public class AliveHelper {
      * <p>警告点,取值范围是[0-1]</p>
      *
      * @param warningPoint
-     *
      */
     public void openAliveWarning(float warningPoint) {
         if (warningPoint < 0 || warningPoint > 1) {

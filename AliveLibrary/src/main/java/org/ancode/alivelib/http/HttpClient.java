@@ -26,8 +26,8 @@ public class HttpClient {
      * @param flag
      * @param stringCallBack
      */
-    public static void queryAliveStats(final Map<String, String> params, final String flag, StringCallBack stringCallBack) {
-        HttpUtils.queryAliveStats(params, new StrHandler(stringCallBack), flag);
+    public static void getAliveStats(final Map<String, String> params, final String flag, StringCallBack stringCallBack) {
+        HttpUtils.getAliveStats(params, new StrHandler(stringCallBack), flag);
     }
 
 

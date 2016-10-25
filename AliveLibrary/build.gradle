@@ -1,9 +1,7 @@
 apply plugin: 'com.android.library'
-
+// add plugin
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "0.0.1"
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -25,8 +23,6 @@ android {
         abortOnError false
     }
 
-
-
 //    task makeJar(type: Copy) {
 //        delete 'build/libs/myLibrary.jar'
 //        from('build/intermediates/bundles/release/')
@@ -37,59 +33,11 @@ android {
 
 
 }
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
 }
-
-
-allprojects {
-    tasks.withType(Javadoc) {
-        options{
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            links "http://docs.oracle.com/javase/7/docs/api"
-        }
-    }
-}
-
-def siteUrl = 'https://github.com/AnromOS/AliveHelper'    // project homepage
-def gitUrl = 'https://github.com/AnromOS/AliveHelper.git' // project git
-group = "org.ancode"
-
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                name 'AliveHelper'
-                url siteUrl
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'andyliu'
-                        name 'andyliu'
-                        email 'andylzs1992@gmail.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-                }
-            }
-        }
-    }
-}
-
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -105,29 +53,143 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
-
-
 artifacts {
     archives javadocJar
     archives sourcesJar
 }
 
-Properties properties = new Properties()
-boolean isHasFile = false
-if (project.rootProject.file('local.properties') != null){
-    isHasFile = true
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//install {
+//    repositories.mavenInstaller {
+//        pom.project {
+//            packaging 'aar'
+//            groupId 'org.ancode' //自己定义的组名
+//            artifactId 'alivelibrary'
+//
+//            name 'AliveLibrary'
+//            description '防杀助手'
+//            url 'https://github.com/AnromOS/AliveHelper'
+//            inceptionYear '2016'
+//
+//            licenses {
+//                license {
+//                    name 'The Apache Software License, Version 2.0'
+//                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    distribution 'repo'
+//                }
+//            }
+//            scm {
+//                connection 'https://github.com/AnromOS/AliveHelper.git'
+//                url 'https://github.com/AnromOS/AliveHelper'
+//
+//            }
+//            developers {
+//                developer {
+//                    name 'andyliuzs'
+//                    email '673988904@qq.com'
+//                }
+//            }
+//        }
+//
+//    }
+//}
+
+// Bintray
+
+//获取local.propertes的信息
+//Properties properties = new Properties()
+//properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//bintray {
+//    user = properties.getProperty("bintray.user")
+//    key = properties.getProperty("bintray.apikey")
+//    publish = true
+//    configurations = ['archives']
+//    pkg {
+//        //填入 bintray 上对应的 package 信息
+//        repo = 'maven'
+//        name = 'AliveLibrary'
+//        vcsUrl = 'https://github.com/AnromOS/AliveHelper.git'
+//        websiteUrl = 'https://github.com/AnromOS/AliveHelper'
+//        licenses = ['Apache-2.0']
+//        issueTrackerUrl = 'https://github.com/AnromOS/AliveHelper/issues'
+//        publicDownloadNumbers = true
+//        version {
+//            name = '1.0-Final'
+//            desc = 'alive helper release'
+//            released = new Date()
+//            vcsTag = '0.0.3'
+//            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+//        }
+//    }
+//}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
+
+task findConventions << {
+    println project.getConvention()
+}
+
+
+
+
+group = 'org.ancode'
+version = '0.0.3'
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'AliveHelper'
+            description '防杀助手'
+            url 'https://github.com/AnromOS/AliveHelper'
+            inceptionYear '2016'
+
+            packaging 'aar'
+            groupId 'org.ancode'
+            artifactId 'alive-library'
+            version '0.0.3'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                connection 'https://github.com/AnromOS/AliveHelper.git'
+                url 'https://github.com/AnromOS/AliveHelper'
+
+            }
+            developers {
+                developer {
+                    name 'andyliuzs'
+                }
+            }
+        }
+    }
+}
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {
-    user = isHasFile ? properties.getProperty("bintray.user") : System.getenv("bintray.user")
-    key = isHasFile ? properties.getProperty("bintray.apikey") : System.getenv("bintray.apikey")
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
     configurations = ['archives']
     pkg {
-        repo = "maven"
-        name = "alivehelper"
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = ["Apache-2.0"]
-        publish = true
+        repo = 'maven'
+        name = 'ancode-library'
+        userOrg = user
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/AnromOS/AliveHelper.git'
+        version {
+            name = '0.0.3'
+            desc = 'alive library first upload'
+            vcsTag = '0.0.3'
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+        }
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
 }

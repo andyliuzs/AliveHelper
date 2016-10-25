@@ -3,6 +3,7 @@ package org.ancode.alivehelperdemo;
 import android.os.Build;
 
 import org.ancode.alivelib.AliveHelper;
+import org.ancode.alivelib.bean.BaseStatsInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,23 +35,34 @@ public class Application extends android.app.Application {
 //        AliveHelper.useAnet(false); //是否使用原网环境
 
         //*****开启使用率统计相关******//
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("device", Build.MODEL);
-            jsonObject.put("os", Build.DISPLAY);
-            //如果是加密电话
-            jsonObject.put("phone", "13018211911");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String tag = "MH:13018211911";
-        //开启统计
-        AliveHelper.getHelper().openAliveStats(jsonObject.toString(),tag);
 
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject.put("device", Build.MODEL);
+//            jsonObject.put("os", Build.DISPLAY);
+//            //如果是加密电话
+//            jsonObject.put("phone", "13018211911");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        String tag = "MH:13018211911";
+
+        //新方法
+        BaseStatsInfo statsInfo = new BaseStatsInfo();
+        statsInfo.setDevice(Build.MODEL);
+        statsInfo.setOs(Build.DISPLAY);
+        statsInfo.setIdName("phone");
+        statsInfo.setId("13018211911");
+        statsInfo.setTag("MH:13018211911");
+
+
+        //开启统计
+//        AliveHelper.getHelper().openAliveStats(jsonObject.toString(), tag);
+        AliveHelper.getHelper().openAliveStats(statsInfo);
         //或者使用
-        AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());
-        AliveHelper.getHelper().setAliveTag(tag);
-        AliveHelper.getHelper().openAliveStats();
+//        AliveHelper.getHelper().setAliveStatsInfo(statsInfo.getStatsInfo().toString());
+//        AliveHelper.getHelper().setAliveTag(statsInfo.getTag());
+//        AliveHelper.getHelper().openAliveStats();
 
         //关闭统计
         //AliveHelper.getHelper().closeAliveStats();

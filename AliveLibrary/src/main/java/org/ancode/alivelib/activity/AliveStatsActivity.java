@@ -34,7 +34,8 @@ import java.util.Map;
  */
 public class AliveStatsActivity extends BaseActivity {
     private static final String TAG = AliveStatsActivity.class.getSimpleName();
-    private List<String> queryResult = new ArrayList<String>();
+    private WebView webView;
+    ProgressBar progressBar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +50,13 @@ public class AliveStatsActivity extends BaseActivity {
         Date date = new Date();
         String beginTime = String.valueOf(DateTimeUtils.getBeforeDate(date, 1).getTime());
         String endTime = String.valueOf(date.getTime());
-//        params.put("app", packageName);
-//        params.put("type", Constants.TYPE_ALIVE);
-//        params.put("tag", AliveSPUtils.getInstance().getASTag());
-//        params.put("begin", beginTime);
-//        params.put("end", endTime);
-
-        //测试数据
-        params.put("app", "org.ancode.mixun");
+        params.put("app", packageName);
         params.put("type", Constants.TYPE_ALIVE);
-        params.put("tag", "MX:92416");
+        params.put("tag", AliveSPUtils.getInstance().getASTag());
         params.put("begin", beginTime);
         params.put("end", endTime);
-        HttpClient.queryAliveStats(params, HttpClient.HTTP_CALL_FLAG, new StringCallBack() {
+
+        HttpClient.getAliveStats(params, HttpClient.HTTP_CALL_FLAG, new StringCallBack() {
             @Override
             public void onResponse(String response) {
                 JSONObject jsonObj = null;
@@ -70,19 +65,7 @@ public class AliveStatsActivity extends BaseActivity {
                     if (jsonObj.has("result")) {
                         String result = jsonObj.get("result").toString();
                         if (result.equals("ok")) {
-                            if (jsonObj.has("stats")) {
-                                showLoading(false);
-                                JSONArray jsonArray = jsonObj.getJSONArray("stats");
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    queryResult.add(jsonArray.getString(i));
-                                    Log.v(TAG, jsonArray.getString(i));
-                                }
-
-                            } else {
-                                showLoading(false);
-                                showEmptyView(true);
-                            }
-
+                            onRefresh(result);
                         } else if (result.equals("failed")) {
                             showLoading(false);
                             showErrorView(true);
@@ -114,20 +97,75 @@ public class AliveStatsActivity extends BaseActivity {
     @Override
     protected void initView() {
         setTitle(String.format(getString(R.string.alive_stats_title), appName));
+        progressBar = (ProgressBar) findViewById(R.id.progress);
+        webView = (WebView) findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+        //获取WebSettings对象,设置缩放
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setDomStorageEnabled(true);//允许DCOM
+
+        final ProgressBar finalProgressBar = progressBar;
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                finalProgressBar.setProgress(newProgress);
+                if (newProgress == 100) {
+                    finalProgressBar.setVisibility(View.INVISIBLE);
+                } else {
+                    finalProgressBar.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
     @Override
     protected void onRefresh(String data) {
+        webView.loadUrl(data);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (URLUtil.isNetworkUrl(url)) {
+                    return false;
+                }
+                Log.v("WebViewDialog", "start Web url is = " + url);
+                try {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setData(Uri.parse(url));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (webView != null) {
+            webView.destroy();
+            webView = null;
+        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+            webView.goBack();
+            return true;
+        }
+
         return super.onKeyDown(keyCode, event);
     }
 

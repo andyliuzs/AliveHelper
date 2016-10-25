@@ -102,6 +102,23 @@ public class HttpUtils {
      * @return
      */
     public static boolean uploadAliveStats(long beginTime, long endTime) {
+        /*****
+         * {
+         "app": "org.ancode.miliu",
+         "info": {
+         "device": "htc",
+         "id": "xxx",
+         "os": "android"
+         },
+         "stat": {
+         "type":"alive",
+         "tag":"MH:13146461472"
+         "data":["1245851245 3g","1245851245 wifi","1245851245 3g","1245851245 wifi"]
+         }
+         }
+         */
+
+
         String packageName = HelperConfig.CONTEXT.getPackageName().toString();
         JSONObject info = null;
         String tag = AliveSPUtils.getInstance().getASTag();
@@ -175,7 +192,7 @@ public class HttpUtils {
      * @param handler
      * @param flag
      */
-    public static void queryAliveStats(final Map<String, String> params, final Handler handler, final String flag) {
+    public static void getAliveStats(final Map<String, String> params, final Handler handler, final String flag) {
         new Thread(new Runnable() {
             @Override
             public void run() {

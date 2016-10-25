@@ -20,6 +20,9 @@ AliveHelper防杀助手,统计应用使用率.
         功能类,可以在Application初始化完成之后,任意地方使用,根据实际场景进行使用
 
 ####1).开启使用率统计相关
+
+        //已过时方法调用
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("device", Build.MODEL);
@@ -30,14 +33,27 @@ AliveHelper防杀助手,统计应用使用率.
             e.printStackTrace();
         }
         String tag = "MH:13018211911";
-        //开启统计
+
+        @Deprecated
         AliveHelper.getHelper().openAliveStats(jsonObject.toString(),tag);
         或者使用
         AliveHelper.getHelper().setAliveStatsInfo(jsonObject.toString());
         AliveHelper.getHelper().setAliveTag(tag);
         AliveHelper.getHelper().openAliveStats();
 
+        //建议使用方法
+
+        BaseStatsInfo statsInfo = new BaseStatsInfo();
+        statsInfo.setDevice(Build.MODEL);
+        statsInfo.setOs(Build.DISPLAY);
+        statsInfo.setIdName("phone");
+        statsInfo.setId("13018211911");
+        statsInfo.setTag("MH:13018211911");
+
+        AliveHelper.getHelper().openAliveStats(statsInfo);
+
         //关闭统计
+
         //AliveHelper.getHelper().closeAliveStats();
 
         - 注意:openAliveStats(jsonObject.toString())与setAliveStatsInfo(String info),info格式为json,json内参数内容不固定,需讨论.
